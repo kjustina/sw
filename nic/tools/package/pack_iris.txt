@@ -21,9 +21,9 @@ nic/build/$ARCH/$PIPELINE/bin/p4asm/                                /nic/conf/ir
 nic/build/$ARCH/$PIPELINE/bin/p4pasm/                               /nic/conf/iris/p4plus_bin/
 nic/build/$ARCH/$PIPELINE/pgm_bin/                                  /nic/conf/iris/pgm_bin/
 
-nic/build/$ARCH/$PIPELINE/gen/p4gen/p4/p4pd/capri_p4_table_map.json    /nic/conf/iris/capri_p4_table_map.json
-nic/build/$ARCH/$PIPELINE/gen/p4gen/common_rxdma_actions/p4pd/capri_p4_table_map.json /nic/conf/iris/capri_p4_rxdma_table_map.json
-nic/build/$ARCH/$PIPELINE/gen/p4gen/common_txdma_actions/p4pd/capri_p4_table_map.json /nic/conf/iris/capri_p4_txdma_table_map.json
+nic/build/$ARCH/$PIPELINE/gen/p4gen/p4/p4pd/p4_table_map.json    /nic/conf/iris/p4_table_map.json
+nic/build/$ARCH/$PIPELINE/gen/p4gen/common_rxdma_actions/p4pd/p4_table_map.json /nic/conf/iris/p4_rxdma_table_map.json
+nic/build/$ARCH/$PIPELINE/gen/p4gen/common_txdma_actions/p4pd/p4_table_map.json /nic/conf/iris/p4_txdma_table_map.json
 
 nic/build/$ARCH/$PIPELINE/bin/canary                                   /nic/bin/
 nic/build/$ARCH/$PIPELINE/bin/console                                  /nic/bin/

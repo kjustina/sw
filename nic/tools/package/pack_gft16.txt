@@ -22,7 +22,7 @@ nic/conf/serdes_68-0004.json                                        /nic/conf/
 nic/conf/serdes_68-0005.json                                        /nic/conf/
 nic/conf/serdes_68-0006.json                                        /nic/conf/
 nic/conf/serdes_68-0007.json                                        /nic/conf/
-nic/build/$ARCH/$PIPELINE/gen/p4gen/$PIPELINE/p4pd/capri_p4_table_map.json    /nic/conf/$PIPELINE/capri_p4_table_map.json
+nic/build/$ARCH/$PIPELINE/gen/p4gen/$PIPELINE/p4pd/p4_table_map.json    /nic/conf/$PIPELINE/_p4_table_map.json
 
 nic/build/$ARCH/$PIPELINE/lib/libp4pd_$PIPELINE.so                   /nic/lib/
 nic/build/$ARCH/$PIPELINE/lib/libp4pd_common_p4plus_txdma.so         /nic/lib/
