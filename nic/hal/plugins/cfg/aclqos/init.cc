@@ -525,6 +525,7 @@ end:
 extern "C" hal_ret_t
 aclqos_init (hal_cfg_t *hal_cfg)
 {
+#if 0   /* TBD-ELBA-REBASE: */
     hal_ret_t            ret;
 
     svc_reg((ServerBuilder *)hal_cfg->server_builder, hal_cfg->features);
@@ -536,14 +537,17 @@ aclqos_init (hal_cfg_t *hal_cfg)
     // TODO acls need cpu interface. Right now, in GFT mode, the
     // hal_cpu_if_create() fails, so cpu interface is not created
     // So skipping installation of acls
-    if (getenv("MICROSEG_ENABLE") && 
+    if (getenv("MICROSEG_ENABLE") &&
         (hal_cfg->features != HAL_FEATURE_SET_GFT)) {
         // do acl creates after qos creates. acls depend on qos config
         ret = hal_acl_config_init();
         HAL_ABORT(ret == HAL_RET_OK);
-    } 
+    }
 
     return HAL_RET_OK;
+#else
+    return HAL_RET_OK;
+#endif
 }
 
 // cleanup routine for aclqos module

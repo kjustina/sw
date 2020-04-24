@@ -1619,6 +1619,7 @@ port::port_link_sm_reset (void)
 sdk_ret_t
 port::port_disable(void)
 {
+#if 0   /* TBD-ELBA-REBASE: */
     // check if already disabled
     if (this->admin_state_ == port_admin_state_t::PORT_ADMIN_STATE_DOWN) {
         return SDK_RET_OK;
@@ -1638,7 +1639,10 @@ port::port_disable(void)
         port_event_notify(port_event_t::PORT_EVENT_LINK_DOWN);
     }
 
-    return SDK_RET_OK;;
+    return SDK_RET_OK;
+#else
+    return SDK_RET_OK;
+#endif
 }
 
 sdk_ret_t
