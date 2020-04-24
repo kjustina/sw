@@ -335,6 +335,9 @@ sdk_ret_t elb_pb_sched_spq_pgm(uint32_t chip_id, uint32_t inst_id,
                                tm_port_t port, tm_q_t oq,
                                pb_sched_node_input_info_t *input_info);
 
+uint32_t elba_tm_get_port_occupancy(tm_port_t port, uint32_t iq);
+uint32_t elba_tm_get_xon_threshold(uint32_t ctx);
+uint32_t elba_tm_get_xoff_threshold(uint32_t ctx);
 sdk_ret_t elba_tm_set_reserved_min(uint32_t reserved_min);
 
 sdk_ret_t elba_queue_stats_get(tm_port_t port, void *stats);
@@ -359,6 +362,9 @@ sdk_ret_t elba_tm_get_uplink_mac_xoff(tm_port_t port,
 
 sdk_ret_t elba_tm_uplink_set_cam_da(tm_port_t port, uint32_t  entry,
                                     uint64_t  dmac);
+sdk_ret_t elba_tm_get_current_credits(tm_port_t tm_port,
+                             	    tm_q_t oq,
+                             	    uint32_t *val);
 
 }    // namespace elba
 }    // namespace platform

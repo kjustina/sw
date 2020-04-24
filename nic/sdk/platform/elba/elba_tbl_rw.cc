@@ -38,15 +38,19 @@ namespace elba {
 #define ELBA_FREE    free
 
 /* Cache invalidate register address and memory mapped addresses */
-#define CSR_CACHE_INVAL_INGRESS_REG_ADDR 0x25002ec  /* TBD-ELBA-REBASE */
-#define CSR_CACHE_INVAL_EGRESS_REG_ADDR  0x2d002ec
-#define CSR_CACHE_INVAL_TXDMA_REG_ADDR   0x45002ec
-#define CSR_CACHE_INVAL_RXDMA_REG_ADDR   0x4d002ec
+#define CSR_CACHE_INVAL_INGRESS_REG_ADDR 0x61701000
+#define CSR_CACHE_INVAL_EGRESS_REG_ADDR  0x60f01000
+#define CSR_CACHE_INVAL_TXDMA_REG_ADDR   0x12701000
+#define CSR_CACHE_INVAL_RXDMA_REG_ADDR   0x60101000
+#define CSR_CACHE_INVAL_XDMA_REG_ADDR    0x12a01000
+#define CSR_CACHE_INVAL_PXB_REG_ADDR     0x200c7000
 
 static uint32_t *csr_cache_inval_ingress_va;
 static uint32_t *csr_cache_inval_egress_va;
 static uint32_t *csr_cache_inval_txdma_va;
 static uint32_t *csr_cache_inval_rxdma_va;
+static uint32_t *csr_cache_inval_xdma_va;
+static uint32_t *csr_cache_inval_pxb_va;
 
 typedef int elba_error_t;
 
@@ -588,8 +592,61 @@ static inline bool
 p4plus_invalidate_cache_aligned (uint64_t addr, uint32_t size_in_bytes,
                                  p4plus_cache_action_t action)
 {
+    assert ((addr & ~CACHE_LINE_SIZE_MASK) == addr);
+
+    while ((int)size_in_bytes > 0) {
+        uint32_t claddr = (addr >> CACHE_LINE_SIZE_SHIFT) << 1;
+        if (action & p4plus_cache_action_t::P4PLUS_CACHE_INVALIDATE_RXDMA) {
+            if (csr_cache_inval_rxdma_va) {
+                *csr_cache_inval_rxdma_va = claddr;
+            } else {
+                sdk::lib::pal_reg_write(CSR_CACHE_INVAL_RXDMA_REG_ADDR,
+                                        &claddr, 1);
+            }
+        }
+        if (action & p4plus_cache_action_t::P4PLUS_CACHE_INVALIDATE_TXDMA) {
+            if (csr_cache_inval_txdma_va) {
+                *csr_cache_inval_txdma_va = claddr;
+            } else {
+                sdk::lib::pal_reg_write(CSR_CACHE_INVAL_TXDMA_REG_ADDR,
+                                        &claddr, 1);
+            }
+        }
+        size_in_bytes -= CACHE_LINE_SIZE;
+        addr += CACHE_LINE_SIZE;
+    }
+
     return true;
 }
+
+
+void
+p4_invalidate_cache (uint64_t addr, uint32_t size_in_bytes,
+                     p4pd_table_cache_t cache)
+{
+    while ((int)size_in_bytes > 0) {
+        uint32_t claddr = (addr >> CACHE_LINE_SIZE_SHIFT) << 1;
+        if (cache & P4_TBL_CACHE_INGRESS) {
+            if (csr_cache_inval_ingress_va) {
+                *csr_cache_inval_ingress_va = claddr;
+            } else {
+                sdk::lib::pal_reg_write(CSR_CACHE_INVAL_INGRESS_REG_ADDR,
+                                        &claddr, 1);
+            }
+        }
+        if (cache & P4_TBL_CACHE_EGRESS) {
+            if (csr_cache_inval_egress_va) {
+                *csr_cache_inval_egress_va = claddr;
+            } else {
+                sdk::lib::pal_reg_write(CSR_CACHE_INVAL_EGRESS_REG_ADDR,
+                                        &claddr, 1);
+            }
+        }
+        size_in_bytes -= CACHE_LINE_SIZE;
+        addr += CACHE_LINE_SIZE;
+    }
+}
+
 
 bool
 p4plus_invalidate_cache (uint64_t addr, uint32_t size_in_bytes,
@@ -613,13 +670,6 @@ bool
 p4plus_invalidate_cache_all (p4plus_cache_action_t action)
 {
     return true;
-}
-
-void
-p4_invalidate_cache (uint64_t addr, uint32_t size_in_bytes,
-                     p4pd_table_cache_t cache)
-{
-    //@@TODO - implement for elba
 }
 
 void
@@ -767,11 +817,17 @@ elba_table_csr_cache_inval_init (void)
         (uint32_t *)sdk::lib::pal_mem_map(CSR_CACHE_INVAL_TXDMA_REG_ADDR, 0x4);
     csr_cache_inval_rxdma_va =
         (uint32_t *)sdk::lib::pal_mem_map(CSR_CACHE_INVAL_RXDMA_REG_ADDR, 0x4);
-    SDK_TRACE_DEBUG("CSR cache inval ing 0x%llx, egr 0x%llx, txdma 0x%llx, rxdma 0x%llx",
+    csr_cache_inval_xdma_va =
+        (uint32_t *)sdk::lib::pal_mem_map(CSR_CACHE_INVAL_XDMA_REG_ADDR, 0x4);
+    csr_cache_inval_pxb_va =
+        (uint32_t *)sdk::lib::pal_mem_map(CSR_CACHE_INVAL_PXB_REG_ADDR, 0x4);
+    SDK_TRACE_DEBUG("CSR cache inval ing 0x%llx, egr 0x%llx, txdma 0x%llx, rxdma 0x%llx, xdma 0x%llx, pxb 0x%llx",
                     (mem_addr_t)csr_cache_inval_ingress_va,
                     (mem_addr_t)csr_cache_inval_egress_va,
                     (mem_addr_t)csr_cache_inval_txdma_va,
-                    (mem_addr_t)csr_cache_inval_rxdma_va);
+                    (mem_addr_t)csr_cache_inval_rxdma_va,
+                    (mem_addr_t)csr_cache_inval_xdma_va,
+                    (mem_addr_t)csr_cache_inval_pxb_va);
 }
 
 sdk_ret_t
@@ -1551,7 +1607,30 @@ elba_hbm_table_entry_cache_invalidate (p4pd_table_cache_t cache,
                                        uint16_t entry_width,
                                        mem_addr_t base_mem_pa)
 {
-    return SDK_RET_INVALID_OP;  /* TBD-ELBA-REBASE: revisit */
+// TBD-ELBA-REBASE
+#ifdef REDO
+    time_profile_begin(sdk::utils::time_profile::CAPRI_HBM_TABLE_ENTRY_CACHE_INVALIDATE);
+    uint64_t addr = (base_mem_pa + entry_addr);
+    if (cache & (P4_TBL_CACHE_INGRESS | P4_TBL_CACHE_EGRESS)) {
+        p4_invalidate_cache(addr, entry_width, cache);
+    }
+
+    // Allow cache to be set for both P4 (above) and P4+ (below)
+    if ((cache & P4_TBL_CACHE_TXDMA_RXDMA) == P4_TBL_CACHE_TXDMA_RXDMA) {
+        p4plus_invalidate_cache(addr, entry_width,
+                                P4PLUS_CACHE_INVALIDATE_BOTH);
+    } else if (cache & P4_TBL_CACHE_TXDMA) {
+        p4plus_invalidate_cache(addr, entry_width,
+                                P4PLUS_CACHE_INVALIDATE_TXDMA);
+    } else if (cache & P4_TBL_CACHE_RXDMA) {
+        p4plus_invalidate_cache(addr, entry_width,
+                                P4PLUS_CACHE_INVALIDATE_RXDMA);
+    } else {
+        SDK_ASSERT(cache);
+    }
+    time_profile_end(sdk::utils::time_profile::CAPRI_HBM_TABLE_ENTRY_CACHE_INVALIDATE);
+#endif
+    return SDK_RET_OK;
 }
 
 sdk_ret_t

@@ -5,7 +5,13 @@ MODULE_TARGET   = sysmond.bin
 MODULE_PIPELINE = iris
 MODULE_SRCS     = $(wildcard ${MODULE_SRC_DIR}/*.cc ${MODULE_SRC_DIR}/event_recorder/*.cc) \
                   ${MODULE_SRC_DIR}/delphi/sysmond_delphi.cc ${MODULE_SRC_DIR}/delphi/sysmond_delphi_cb.cc \
-                  ${MODULE_SRC_DIR}/delphi/asicerrord_delphi.cc ${MODULE_SRC_DIR}/cpld/*.cc)
+                  ${MODULE_SRC_DIR}/cpld/*.cc)
+ifeq ($(ASIC),elba)
+MODULE_SRCS     += $(wildcard ${MODULE_SRC_DIR}/delphi/elba/*.cc) 
+else
+MODULE_SRCS     += $(wildcard ${MODULE_SRC_DIR}/delphi/capri/*.cc) 
+endif
+
 MODULE_SOLIBS   = delphisdk trace halproto utils sdkasicpd \
                   sdk_asicrw_if sensor pal catalog logger \
                   pdcommon p4pd_${PIPELINE} sdkp4 \

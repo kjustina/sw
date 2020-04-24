@@ -78,6 +78,18 @@ traverse_interrupts (intr_reg_t &reg)
     uint16_t field_count = reg.field_count;
     intr_field_t *field;
 
+#ifdef ELBA
+    // TBD-ELBA-REBASE: PCIE/BX/MX all skipped - needs refinement: BX/MX have uncorrectable errors not being handled even in Capri
+    switch (reg.id) {
+    case 418 ... 461:
+        // Skip PCIE blocks
+    case 17 ... 18:
+        // Skip BX block
+    case 1 ... 6:
+        //Skip MX blocks
+        return;
+    }
+#else
     switch (reg.id) {
     case 137: // pp_pp_int_pp
     case 140:
@@ -96,6 +108,7 @@ traverse_interrupts (intr_reg_t &reg)
         //Skip MX blocks
         return;
     }
+#endif
 
     if (reg_type == INTR_REG_TYPE_SRC) {
         // SDK_TRACE_ERR("Reading addr: 0x%x", reg_addr);
@@ -148,14 +161,22 @@ intr_init (intr_cfg_t *cfg)
 void
 traverse_interrupts (void)
 {
+#ifdef ELBA
+    traverse_interrupts(elb0);
+#else
     traverse_interrupts(cap0);
+#endif
     traverse_interrupts(all_csrs);
 }
 
 void
 walk_interrupts (intr_walk_cb_t intr_walk_cb, void *ctxt)
 {
+#ifdef ELBA
+    walk_interrupts(elb0, intr_walk_cb, ctxt);
+#else
     walk_interrupts(cap0, intr_walk_cb, ctxt);
+#endif
     walk_interrupts(all_csrs, intr_walk_cb, ctxt);
 }
 
