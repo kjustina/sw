@@ -883,7 +883,8 @@ elba_tm_scheduler_map_update_l${level} (uint32_t port,
                                         uint32_t node,
                                         tm_queue_node_params_t *node_params)
 {
-#ifdef TODO_ELBA
+//TBD-ELBA-REBASE
+#ifdef TBD_ELBA_REBASE
     stringstream data;
     data << hex << endl;
     elb_top_csr_t &elb0 = ELB_BLK_REG_MODEL_ACCESS(elb_top_csr_t, 0, 0);
@@ -3133,7 +3134,8 @@ elba_tm_debug_stats_get (tm_port_t port, tm_debug_stats_t *debug_stats,
 uint32_t
 elba_tm_get_port_occupancy (tm_port_t port, uint32_t iq)
 {
-#if TBD-ELBA-REBASE
+//TBD-ELBA-REBASE
+#ifdef TBD_ELBA_REBASE
     cap_top_csr_t &cap0 = g_capri_state_pd->cap_top();
     cap_pbc_csr_t &pbc_csr = cap0.pb.pbc;
     cpp_int port_payload_occupancy_val;
@@ -3162,7 +3164,8 @@ elba_tm_get_port_occupancy (tm_port_t port, uint32_t iq)
 uint32_t
 elba_tm_get_xon_threshold (uint32_t ctx)
 {
-#if TBD-ELBA-REBASE
+//TBD-ELBA-REBASE
+#ifdef TBD_ELBA_REBASE
     cap_top_csr_t &cap0 = g_capri_state_pd->cap_top();
     cap_pbc_csr_t &pbc_csr = cap0.pb.pbc;
     uint32_t xon_threshold = 0;
@@ -3179,7 +3182,8 @@ elba_tm_get_xon_threshold (uint32_t ctx)
 uint32_t
 elba_tm_get_xoff_threshold (uint32_t ctx)
 {
-#if TBD-ELBA-REBASE
+//TBD-ELBA-REBASE
+#ifdef TBD_ELBA_REBASE
     cap_top_csr_t &cap0 = g_capri_state_pd->cap_top();
     cap_pbc_csr_t &pbc_csr = cap0.pb.pbc;
     uint32_t xoff_threshold = 0;
@@ -3231,7 +3235,8 @@ elba_tm_get_current_credits (tm_port_t tm_port,
                               tm_q_t oq,
                               uint32_t *val)
 {
-#ifdef TBD-ELBA-REBASE
+//TBD-ELBA-REBASE
+#ifdef TBD_ELBA_REBASE
     cap_top_csr_t &cap0 = g_capri_state_pd->cap_top();
     cap_pbc_csr_t &pbc_csr = cap0.pb.pbc;
 

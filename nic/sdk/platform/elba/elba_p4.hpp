@@ -34,6 +34,16 @@ namespace elba {
 #define ELBA_TM_NUM_PORTS                   (ELBA_TM_PORT_INGRESS+1)
 
 /*****************************************************************************/
+/* ELBA_TM instance type                                                   */
+/*****************************************************************************/
+#define ELBA_TM_INSTANCE_TYPE_NORMAL         0
+#define ELBA_TM_INSTANCE_TYPE_MULTICAST      1
+#define ELBA_TM_INSTANCE_TYPE_CPU            2
+#define ELBA_TM_INSTANCE_TYPE_SPAN           3
+#define ELBA_TM_INSTANCE_TYPE_CPU_AND_DROP   4
+#define ELBA_TM_INSTANCE_TYPE_SPAN_AND_DROP  5
+
+/*****************************************************************************/
 /* Header sizes                                                              */
 /*****************************************************************************/
 #define ELBA_GLOBAL_INTRINSIC_HDR_SZ  17

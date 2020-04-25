@@ -21,8 +21,8 @@
 #include "third-party/asic/elba/model/elb_pic/elb_pics_csr.h"
 #include "third-party/asic/elba/model/elb_te/elb_te_csr.h"
 #include "third-party/asic/ip/verif/pcpp/cpp_int_helper.h"
-#include "third-party/asic/elba/verif/apis/elb_pics_api.h"
-#include "third-party/asic/elba/verif/apis/elb_pict_api.h"
+#include "third-party/asic/elba/verif/apis/elb_pics_sw_api.h"
+#include "third-party/asic/elba/verif/apis/elb_pict_sw_api.h"
 #include "third-party/asic/elba/model/elb_top/csr_defines/elb_pics_c_hdr.h"
 #include "third-party/asic/elba/design/common/gen/elb_pf_decoders.h"
 

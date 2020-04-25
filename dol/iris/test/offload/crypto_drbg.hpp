@@ -9,7 +9,7 @@
 #include "utils.hpp"
 #ifdef ELBA
 #include "third-party/asic/elba/model/elb_top/elb_top_csr_defines.h"
-#include "third-party/asic/elba/model/elb_he/readonly/elb_hens_csr_define.h"
+#include "third-party/asic/elba/model/elb_top/csr_defines/elb_hens_c_hdr.h"
 #else
 #include "third-party/asic/capri/model/cap_top/cap_top_csr_defines.h"
 #include "third-party/asic/capri/model/cap_he/readonly/cap_hens_csr_define.h"
