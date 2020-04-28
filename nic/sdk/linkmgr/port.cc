@@ -131,6 +131,9 @@ port::port_mac_port_num_calc(void)
 sdk_ret_t
 port::port_mac_cfg_fec(port_fec_type_t fec_type)
 {
+    printf("LINK_MGR:%s:%d\n", __FILE__, __LINE__);
+    SDK_TRACE_DEBUG("LINK_MGR:%s:%d\n", __FILE__, __LINE__);
+    return SDK_RET_OK;
     mac_info_t mac_info;
     memset(&mac_info, 0, sizeof(mac_info_t));
 
@@ -162,6 +165,9 @@ port::port_mac_cfg_fec(port_fec_type_t fec_type)
 sdk_ret_t
 port::port_mac_cfg(void)
 {
+    printf("LINK_MGR:%s:%d\n", __FILE__, __LINE__);
+    SDK_TRACE_DEBUG("LINK_MGR:%s:%d\n", __FILE__, __LINE__);
+    return SDK_RET_OK;
     mac_info_t mac_info;
     memset(&mac_info, 0, sizeof(mac_info_t));
 
@@ -194,6 +200,9 @@ sdk_ret_t
 port::port_mac_enable(bool enable)
 {
     uint32_t mac_port_num = port_mac_port_num_calc();
+    printf("LINK_MGR:%s:%d\n", __FILE__, __LINE__);
+    SDK_TRACE_DEBUG("LINK_MGR:%s:%d\n", __FILE__, __LINE__);
+    return SDK_RET_OK;
 
     mac_fns()->mac_enable(
                mac_port_num,
@@ -208,6 +217,9 @@ sdk_ret_t
 port::port_mac_soft_reset(bool reset)
 {
     uint32_t mac_port_num = port_mac_port_num_calc();
+    printf("LINK_MGR:%s:%d\n", __FILE__, __LINE__);
+    SDK_TRACE_DEBUG("LINK_MGR:%s:%d\n", __FILE__, __LINE__);
+    return SDK_RET_OK;
 
     mac_fns()->mac_soft_reset(
                    mac_port_num,
@@ -221,6 +233,9 @@ port::port_mac_soft_reset(bool reset)
 sdk_ret_t
 port::port_mac_stats_reset(bool reset)
 {
+    printf("LINK_MGR:%s:%d\n", __FILE__, __LINE__);
+    SDK_TRACE_DEBUG("LINK_MGR:%s:%d\n", __FILE__, __LINE__);
+    return SDK_RET_OK;
     mac_fns()->mac_stats_reset(this->mac_id_, this->mac_ch_, reset);
     port_mac_stats_persist_clear(reset);
 
@@ -231,6 +246,9 @@ sdk_ret_t
 port::port_mac_intr_en(bool enable)
 {
     uint32_t mac_port_num = port_mac_port_num_calc();
+    printf("LINK_MGR:%s:%d\n", __FILE__, __LINE__);
+    SDK_TRACE_DEBUG("LINK_MGR:%s:%d\n", __FILE__, __LINE__);
+    return SDK_RET_OK;
 
     mac_fns()->mac_intr_enable(
             mac_port_num,
@@ -245,6 +263,9 @@ sdk_ret_t
 port::port_mac_intr_clr(void)
 {
     uint32_t mac_port_num = port_mac_port_num_calc();
+    printf("LINK_MGR:%s:%d\n", __FILE__, __LINE__);
+    SDK_TRACE_DEBUG("LINK_MGR:%s:%d\n", __FILE__, __LINE__);
+    return SDK_RET_OK;
 
     mac_fns()->mac_intr_clear(
             mac_port_num,
@@ -257,6 +278,9 @@ port::port_mac_intr_clr(void)
 sdk_ret_t
 port::port_mac_faults_clear(void)
 {
+    printf("LINK_MGR:%s:%d\n", __FILE__, __LINE__);
+    SDK_TRACE_DEBUG("LINK_MGR:%s:%d\n", __FILE__, __LINE__);
+    return SDK_RET_OK;
     mac_fns()->mac_faults_clear(this->mac_id(), this->mac_ch());
     return SDK_RET_OK;
 }
@@ -264,11 +288,15 @@ port::port_mac_faults_clear(void)
 bool
 port::port_mac_faults_get(void)
 {
+    return true;
     return mac_fns()->mac_faults_get(this->mac_id(), this->mac_ch());
 }
 
 sdk_ret_t
 port::port_mac_send_remote_faults(bool send) {
+    printf("LINK_MGR:%s:%d\n", __FILE__, __LINE__);
+    SDK_TRACE_DEBUG("LINK_MGR:%s:%d\n", __FILE__, __LINE__);
+    return SDK_RET_OK;
     mac_fns()->mac_send_remote_faults(
                 this->mac_id(), this->mac_ch(), send);
     return SDK_RET_OK;
@@ -1707,6 +1735,9 @@ port::set_bringup_duration(void)
 sdk_ret_t
 port::port_mac_stats_get (uint64_t *stats_data)
 {
+    printf("LINK_MGR:%s:%d\n", __FILE__, __LINE__);
+    SDK_TRACE_DEBUG("LINK_MGR:%s:%d\n", __FILE__, __LINE__);
+    return SDK_RET_OK;
     mac_fns()->mac_stats_get(this->mac_id_, this->mac_ch_, stats_data);
     // correct mac errata stats
     this->port_mac_stats_errata_correct(stats_data);
@@ -1720,12 +1751,18 @@ port::port_mac_stats_get (uint64_t *stats_data)
 sdk_ret_t
 port::port_deinit (void)
 {
+    printf("LINK_MGR:%s:%d\n", __FILE__, __LINE__);
+    SDK_TRACE_DEBUG("LINK_MGR:%s:%d\n", __FILE__, __LINE__);
+    return SDK_RET_OK;
     mac_fns()->mac_deinit (this->mac_id_, this->mac_ch_);
     return SDK_RET_OK;
 }
 
 sdk_ret_t
 port::port_mac_set_pause_src_addr(uint8_t *mac_addr) {
+    printf("LINK_MGR:%s:%d\n", __FILE__, __LINE__);
+    SDK_TRACE_DEBUG("LINK_MGR:%s:%d\n", __FILE__, __LINE__);
+    return SDK_RET_OK;
     mac_fns()->mac_pause_src_addr(mac_id(), mac_ch(), mac_addr);
     return SDK_RET_OK;
 }
@@ -2032,7 +2069,6 @@ port::port_mac_sync_ical_timeout (void) {
     switch (port_speed()) {
     case port_speed_t::PORT_SPEED_100G:
     case port_speed_t::PORT_SPEED_40G:
-    case port_speed_t::PORT_SPEED_10G:
         return 500; // msec
     default:
         return 100; // msec
@@ -2046,6 +2082,10 @@ sdk_ret_t
 port::port_init(linkmgr_cfg_t *cfg)
 {
     sdk_ret_t   rc           = SDK_RET_OK;
+
+    printf("LINK_MGR:%s:%d\n", __FILE__, __LINE__);
+    SDK_TRACE_DEBUG("LINK_MGR:%s:%d\n", __FILE__, __LINE__);
+    return SDK_RET_OK;
 
     SDK_ASSERT(cfg->cfg_path);
 
@@ -2072,6 +2112,9 @@ sdk_ret_t
 port::phy_port_mac_addr(uint32_t phy_port, mac_addr_t mac_addr) {
     std::string   mac_addr_str;
 
+    printf("LINK_MGR:%s:%d\n", __FILE__, __LINE__);
+    SDK_TRACE_DEBUG("LINK_MGR:%s:%d\n", __FILE__, __LINE__);
+    return SDK_RET_OK;
     if (sdk::platform::readfrukey(BOARD_MACADDRESS_KEY, mac_addr_str) == -1) {
         return SDK_RET_ERR;
     }
@@ -2088,6 +2131,9 @@ sdk_ret_t
 port::port_enable(port *port_p)
 {
     sdk_ret_t ret;
+    printf("LINK_MGR:%s:%d\n", __FILE__, __LINE__);
+    SDK_TRACE_DEBUG("LINK_MGR:%s:%d\n", __FILE__, __LINE__);
+    return SDK_RET_OK;
 
     // wait for linkmgr control thread to process port event
     while (!is_linkmgr_ctrl_thread_ready()) {
@@ -2110,6 +2156,9 @@ sdk_ret_t
 port::port_disable(port *port_p)
 {
     sdk_ret_t ret;
+    printf("LINK_MGR:%s:%d\n", __FILE__, __LINE__);
+    SDK_TRACE_DEBUG("LINK_MGR:%s:%d\n", __FILE__, __LINE__);
+    return SDK_RET_OK;
 
     // wait for linkmgr control thread to process port event
     while (!is_linkmgr_ctrl_thread_ready()) {

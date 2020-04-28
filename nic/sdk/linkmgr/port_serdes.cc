@@ -1343,6 +1343,7 @@ port_serdes_fn_init(platform_type_t platform_type,
 {
     serdes_fn_t        *serdes_fn = &serdes_fns;
 
+    printf("Here port_serdes_fn_init %s:%d  %d\n", __FILE__, __LINE__, platform_type);
     serdes_fn->serdes_basic_cfg     = &serdes_cfg_default;
     serdes_fn->serdes_cfg           = &serdes_cfg_default;
     serdes_fn->serdes_signal_detect = &serdes_signal_detect_default;

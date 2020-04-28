@@ -120,6 +120,9 @@ logical_port_to_tm_port (uint32_t logical_port)
 bool
 aacs_server_en(void)
 {
+    printf("LINK_MGR:%s:%d\n", __FILE__, __LINE__);
+    SDK_TRACE_DEBUG("LINK_MGR:%s:%d\n", __FILE__, __LINE__);
+    return true;
     uint8_t en = g_linkmgr_cfg.catalog->aacs_server_en();
     if (en == 1) {
         return true;
@@ -131,6 +134,9 @@ aacs_server_en(void)
 bool
 aacs_connect(void)
 {
+    printf("LINK_MGR:%s:%d\n", __FILE__, __LINE__);
+    SDK_TRACE_DEBUG("LINK_MGR:%s:%d\n", __FILE__, __LINE__);
+    return true;
     uint8_t connect = g_linkmgr_cfg.catalog->aacs_connect();
     if (connect == 1) {
         return true;
@@ -156,6 +162,8 @@ serdes_info_get(uint32_t sbus_addr,
                 uint32_t port_speed,
                 uint32_t cable_type)
 {
+    printf("LINK_MGR:%s:%d\n", __FILE__, __LINE__);
+    SDK_TRACE_DEBUG("LINK_MGR:%s:%d\n", __FILE__, __LINE__);
     return g_linkmgr_cfg.catalog->serdes_info_get(sbus_addr,
                                                port_speed,
                                                cable_type);
@@ -348,6 +356,9 @@ sdk_ret_t
 linkmgr_notify (uint8_t operation, linkmgr_entry_data_t *data,
                 q_notify_mode_t mode)
 {
+    printf("LINK_MGR:%s:%d\n", __FILE__, __LINE__);
+    SDK_TRACE_DEBUG("LINK_MGR:%s:%d\n", __FILE__, __LINE__);
+    return SDK_RET_OK;
     // notify the ctrl thread about the config pending
     switch (operation) {
         case LINKMGR_OPERATION_PORT_ENABLE:
@@ -367,6 +378,9 @@ linkmgr_notify (uint8_t operation, linkmgr_entry_data_t *data,
 static sdk_ret_t
 linkmgr_timers_init (void)
 {
+    printf("LINK_MGR:%s:%d\n", __FILE__, __LINE__);
+    SDK_TRACE_DEBUG("LINK_MGR:%s:%d\n", __FILE__, __LINE__);
+    return SDK_RET_OK;
     // init the transceiver poll timer
     timer_init(&xcvr_poll_timer_handle, xcvr_poll_timer_cb,
                XCVR_POLL_TIME, XCVR_POLL_TIME);
@@ -498,6 +512,8 @@ void
 linkmgr_threads_stop (void)
 {
     int thread_id;
+    printf("LINK_MGR:%s:%d\n", __FILE__, __LINE__);
+    SDK_TRACE_DEBUG("LINK_MGR:%s:%d\n", __FILE__, __LINE__);
 
     for (thread_id = 0; thread_id < LINKMGR_THREAD_ID_MAX; thread_id++) {
         if (g_linkmgr_threads[thread_id] != NULL) {
@@ -512,6 +528,8 @@ void
 linkmgr_threads_wait (void)
 {
     int thread_id;
+    printf("LINK_MGR:%s:%d\n", __FILE__, __LINE__);
+    SDK_TRACE_DEBUG("LINK_MGR:%s:%d\n", __FILE__, __LINE__);
 
     for (thread_id = 0; thread_id < LINKMGR_THREAD_ID_MAX; thread_id++) {
         if (g_linkmgr_threads[thread_id] != NULL) {
@@ -531,6 +549,9 @@ linkmgr_init (linkmgr_cfg_t *cfg)
 
     g_linkmgr_cfg = *cfg;
 
+    printf("LINK_MGR:%s:%d\n", __FILE__, __LINE__);
+    SDK_TRACE_DEBUG("LINK_MGR:%s:%d\n", __FILE__, __LINE__);
+    return SDK_RET_OK;
     g_linkmgr_state = linkmgr_state::factory();
     if (NULL == g_linkmgr_state) {
         SDK_TRACE_ERR("linkmgr init failed");
@@ -641,6 +662,9 @@ port_update_xcvr_event (void *pd_p, xcvr_event_info_t *xcvr_event_info)
 {
     sdk_ret_t   sdk_ret   = SDK_RET_OK;
     port_args_t port_args = { 0 };
+    printf("LINK_MGR:%s:%d\n", __FILE__, __LINE__);
+    SDK_TRACE_DEBUG("LINK_MGR:%s:%d\n", __FILE__, __LINE__);
+    return SDK_RET_OK;
 
     sdk::linkmgr::port_args_init(&port_args);
 
@@ -731,6 +755,9 @@ port_args_set_by_xcvr_state_ (int phy_port, port_speed_t *port_speed,
                               port_fec_type_t *fec_type, uint32_t *num_lanes,
                               bool *toggle_fec_mode)
 {
+    printf("LINK_MGR:%s:%d\n", __FILE__, __LINE__);
+    SDK_TRACE_DEBUG("LINK_MGR:%s:%d\n", __FILE__, __LINE__);
+    return SDK_RET_OK;
     *port_speed = sdk::platform::cable_speed(phy_port-1);
 
     // TODO FEC assumed based on cable speed
@@ -771,6 +798,9 @@ port_args_set_by_xcvr_state_ (int phy_port, port_speed_t *port_speed,
 sdk_ret_t
 port_args_set_by_xcvr_state (port_args_t *port_args)
 {
+    printf("LINK_MGR:%s:%d\n", __FILE__, __LINE__);
+    SDK_TRACE_DEBUG("LINK_MGR:%s:%d\n", __FILE__, __LINE__);
+    return SDK_RET_OK;
     // if xcvr is inserted:
     //     set port params based on cable
     // else:
@@ -929,6 +959,9 @@ port_create (port_args_t *args)
     sdk_ret_t    ret = SDK_RET_OK;
     void         *mem = NULL;
     port         *port_p = NULL;
+    printf("** returning NULL LINK_MGR:%s:%d\n", __FILE__, __LINE__);
+    SDK_TRACE_DEBUG("** returning NULL LINK_MGR:%s:%d\n", __FILE__, __LINE__);
+    return NULL;
 
     port_init_num_lanes(args);
     if (validate_port_create (args) == false) {
@@ -1506,6 +1539,9 @@ port_store_user_config (port_args_t *port_args)
 sdk_ret_t
 port_shutdown (void *pd_p)
 {
+    printf("LINK_MGR:%s:%d\n", __FILE__, __LINE__);
+    SDK_TRACE_DEBUG("LINK_MGR:%s:%d\n", __FILE__, __LINE__);
+    return SDK_RET_OK;
     port *port_p = (port *)pd_p;
 
     return port_p->port_disable();
@@ -1514,6 +1550,9 @@ port_shutdown (void *pd_p)
 sdk_ret_t
 port_pb_shutdown (void *pd_p)
 {
+    printf("LINK_MGR:%s:%d\n", __FILE__, __LINE__);
+    SDK_TRACE_DEBUG("LINK_MGR:%s:%d\n", __FILE__, __LINE__);
+    return SDK_RET_OK;
     port *port_p = (port *)pd_p;
 
     return port_p->port_pb_enable(false);

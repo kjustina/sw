@@ -94,6 +94,8 @@ evutil_remove_fd(EV_P_ const int fd)
 void
 evutil_add_pal_int(EV_P_ struct pal_int *pal_int, evutil_cb_t *isrcb, void *cbarg)
 {
+    printf("%s:%d\n", __FILE__, __LINE__);
+    return;
     int fd = pal_int_fd(pal_int);
 
     evutil_add_fd_cmn(EV_A_ fd, isrcb, NULL, cbarg, pal_int);

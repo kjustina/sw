@@ -1095,6 +1095,7 @@ port_mac_fn_init(linkmgr_cfg_t *cfg)
     mac_fn_t        *mac_mgmt_fn  = &mac_mgmt_fns;
     platform_type_t platform_type = cfg->platform_type;
 
+    printf("Here  port_mac_fn_init %s:%d  %d\n", __FILE__, __LINE__, platform_type);
     mac_fn->mac_cfg            = &mac_cfg_default;
     mac_fn->mac_cfg_fec        = &mac_cfg_fec_default;
     mac_fn->mac_enable         = &mac_enable_default;

@@ -116,8 +116,8 @@ pciemgr::connect(const char *name, const int receiver)
     serverfd = pciemgrc_open(name, NULL, receiver);
     if (serverfd < 0) {
         // XXX retry connecting to server?
-        fprintf(stderr, "No pciemgr server found - exiting\n");
-        exit(1);
+        fprintf(stderr, "KCM:: No pciemgr server found - exiting\n");
+        // exit(1);
     }
 }
 

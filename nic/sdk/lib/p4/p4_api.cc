@@ -332,16 +332,23 @@ p4pd_tbl_packing_json_parse (p4pd_cfg_t *p4pd_cfg)
     full_path = std::string(p4pd_cfg->cfg_path) + "/" +
                     std::string(p4pd_cfg->table_map_cfg_file);
     std::ifstream tbl_json(full_path.c_str());
+    printf("Here .. %s:%d\n", __FILE__, __LINE__);
+    printf("Here .. %s:%d .. %s \n", __FILE__, __LINE__, full_path.c_str());
+    printf("Here .. %s:%d .. %s:%s \n", __FILE__, __LINE__, p4pd_cfg->cfg_path, p4pd_cfg->table_map_cfg_file);
     read_json(tbl_json, json_pt);
+    printf("Here .. %s:%d\n", __FILE__, __LINE__);
 
     boost::optional<pt::ptree&>table_gl =
         json_pt.get_child_optional(JSON_KEY_MAX);
     if (!table_gl) {
         return P4PD_FAIL;
     }
+    printf("Here .. %s:%d\n", __FILE__, __LINE__);
 
     BOOST_FOREACH (pt::ptree::value_type &obj, json_pt.get_child(JSON_KEY_MAX)) {
+    printf("Here .. %s:%d\n", __FILE__, __LINE__);
         if (obj.first == JSON_KEY_TCAM) {
+    printf("Here .. %s:%d\n", __FILE__, __LINE__);
             boost::optional<pt::ptree&>ing = obj.second.get_child_optional(JSON_KEY_MAX_INGRESS);
             boost::optional<pt::ptree&>egr = obj.second.get_child_optional(JSON_KEY_MAX_EGRESS);
             if (ing) {
@@ -351,6 +358,7 @@ p4pd_tbl_packing_json_parse (p4pd_cfg_t *p4pd_cfg)
                 p4table_max_cfg.tcam_egress_depth = egr.get().get<int>(JSON_KEY_MAX_DEPTH);
             }
         } else if (obj.first == JSON_KEY_SRAM) {
+    printf("Here .. %s:%d\n", __FILE__, __LINE__);
             boost::optional<pt::ptree&>ing = obj.second.get_child_optional(JSON_KEY_MAX_INGRESS);
             boost::optional<pt::ptree&>egr = obj.second.get_child_optional(JSON_KEY_MAX_EGRESS);
             if (ing) {
@@ -364,15 +372,19 @@ p4pd_tbl_packing_json_parse (p4pd_cfg_t *p4pd_cfg)
 
     boost::optional<pt::ptree&>table_pt =
         json_pt.get_child_optional(JSON_KEY_TABLES);
+    printf("Here .. %s:%d\n", __FILE__, __LINE__);
     if (!table_pt) {
         return P4PD_FAIL;
     }
+    printf("Here .. %s:%d\n", __FILE__, __LINE__);
     _p4tbls =
         (p4pd_table_properties_t *)P4PD_CALLOC(num_tables,
                                                sizeof(p4pd_table_properties_t));
+    printf("Here .. %s:%d\n", __FILE__, __LINE__);
     if (!_p4tbls) {
         return P4PD_FAIL;
     }
+    printf("Here .. %s:%d\n", __FILE__, __LINE__);
 
     // iterator over all p4 tables packing data and build book keeping data
     // structures used to read/write to device.
@@ -382,6 +394,7 @@ p4pd_tbl_packing_json_parse (p4pd_cfg_t *p4pd_cfg)
         std::string direction = p4_tbl.second.get<std::string>(JSON_KEY_DIRECTION);
         std::string overflow  = p4_tbl.second.get<std::string>(JSON_KEY_OVERFLOW);
         std::string overflow_parent  = p4_tbl.second.get<std::string>(JSON_KEY_OVERFLOW_PARENT);
+    printf("Here .. %s:%d\n", __FILE__, __LINE__);
 
         tableid = p4pd_get_tableid_from_tablename(tablename.c_str());
         if (tableid == -1) {
@@ -406,6 +419,7 @@ p4pd_tbl_packing_json_parse (p4pd_cfg_t *p4pd_cfg)
         } else {
             tbl->is_oflow_table = false;
         }
+    printf("Here .. %s:%d\n", __FILE__, __LINE__);
 
         tbl->tablename = (char*)p4pd_tbl_names[tableid];
         tbl->tableid = tableid;
@@ -469,6 +483,7 @@ p4pd_tbl_packing_json_parse (p4pd_cfg_t *p4pd_cfg)
         } else {
             tbl->table_location = P4_TBL_LOCATION_PIPE;
         }
+    printf("Here .. %s:%d\n", __FILE__, __LINE__);
         tbl->table_thread_count = p4_tbl.second.get<int>(JSON_KEY_NUM_THREADS);
         boost::optional<pt::ptree&>_table_threads = p4_tbl.second.get_child_optional(JSON_KEY_THREAD_TBL_IDS);
         if (tbl->table_thread_count > 1 && _table_threads) {
