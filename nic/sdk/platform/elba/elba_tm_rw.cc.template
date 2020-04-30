@@ -1054,7 +1054,8 @@ elba_tm_uplink_lif_set (uint32_t port, uint32_t lif)
             }
 //:: #endfor
         default:
-            return sdk::SDK_RET_ERR;
+            return sdk::SDK_RET_OK; // TBD-ELBA-REBASE:: fixup
+            //return sdk::SDK_RET_ERR;
     }
 
     /* Write the csr */

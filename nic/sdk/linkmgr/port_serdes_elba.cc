@@ -1387,6 +1387,9 @@ port_serdes_fn_init(platform_type_t platform_type,
     serdes_fn->serdes_an_rsfec_enable_read =
                                       &serdes_an_rsfec_enable_read_default;
 
+    printf("TBD-ELBA-REBASE Skipping port_serdes_fn_init %s:%d  %d\n", __FILE__, __LINE__, platform_type);
+    return SDK_RET_OK; // TBD-ELBA-REBASE
+
     switch (platform_type) {
     case platform_type_t::PLATFORM_TYPE_HW:
         serdes_fn->serdes_basic_cfg     = &serdes_basic_cfg_hw;
