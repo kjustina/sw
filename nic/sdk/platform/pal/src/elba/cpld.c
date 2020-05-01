@@ -6,15 +6,6 @@
 #include "pal_locks.h"
 #include "pal.h"
 
-#define MDIO_CRTL_LO_REG        0x6
-#define MDIO_CRTL_HI_REG        0x7
-#define MDIO_DATA_LO_REG        0x8
-#define MDIO_DATA_HI_REG        0x9
-
-#define MDIO_ACC_ENA            0x1
-#define MDIO_RD_ENA             0x2
-#define MDIO_WR_ENA             0x4
-
 #ifdef __x86_64__
 int pal_is_qsfp_port_psnt(int port_no)
 {

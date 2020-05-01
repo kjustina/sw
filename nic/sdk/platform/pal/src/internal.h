@@ -8,8 +8,13 @@
 #define __PAL_INTERNAL_H__
 
 #include <string.h>
+#ifdef ELBA
+#include "elb_top_csr_defines.h"
+#include "elb_soc_c_hdr.h"
+#else
 #include "cap_top_csr_defines.h"
 #include "cap_ms_c_hdr.h"
+#endif
 
 struct pal_mem_phys_range_s;
 

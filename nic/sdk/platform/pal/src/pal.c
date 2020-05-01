@@ -151,8 +151,13 @@ int
 pal_get_env(void)
 {
 #ifdef __aarch64__
+#ifdef ELBA
+#define MS_STA_VER \
+    (ELB_ADDR_BASE_MS_SOC_OFFSET + ELB_SOC_CSR_STA_VER_BYTE_ADDRESS)
+#else
 #define MS_STA_VER \
     (CAP_ADDR_BASE_MS_MS_OFFSET + CAP_MS_CSR_STA_VER_BYTE_ADDRESS)
+#endif
 
     union {
         struct {
