@@ -11,18 +11,6 @@
 #include <sstream>
 #include <sys/param.h>
 
-#include "cap_pics_c_hdr.h"
-#include "cap_top_csr_defines.h"
-#include "cap_wa_c_hdr.h"
-namespace pr
-{
-#include "cap_pr_c_hdr.h"
-}
-namespace psp
-{
-#include "cap_psp_c_hdr.h"
-}
-
 #include "nic/include/edmaq.h"
 #include "nic/p4/common/defines.h"
 #include "nic/sdk/lib/thread/thread.hpp"
