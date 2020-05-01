@@ -100,7 +100,7 @@ COMMON_P4C_OPTS             :=
 
 ifeq ($(ASIC),elba)
      NAME_CAPAS     := "[ ELBAS  ]"
-     COMMON_CMD_CAPAS            := ${SDKDIR}/third-party/asic/ip/verif/pensim/gen/bin/elbas
+     COMMON_CMD_CAPAS            := ${SDKDIR}/third-party/asic/ip/verif/pensim/gen/x86_64/bin/elbas
      COMMON_NCC_OPTS             := --asic "elba"
 else
      NAME_CAPAS     := "[ CAPAS  ]"
