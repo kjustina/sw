@@ -47,7 +47,6 @@ export ASIC_SRC := ${SDKDIR}/asic_repo/asic
 
 export ASIC_INCL_DIR := ${SDKDIR}/third-party/asic
 
-ifeq ($(ASIC),capri)
 export NIC_CSR_INCS := ${ASIC_INCL_DIR}/capri/model/cap_top \
     ${ASIC_INCL_DIR}/capri/model/utils \
     ${ASIC_INCL_DIR}/capri/model/cap_prd \
@@ -77,9 +76,8 @@ export NIC_CSR_INCS := ${ASIC_INCL_DIR}/capri/model/cap_top \
     ${ASIC_INCL_DIR}/capri/design/common/gen \
     ${ASIC_INCL_DIR}/capri/verif/apis \
     ${SDKDIR}/model_sim/include \
-    ${ASIC_INCL_DIR}/capri/model/cap_top/csr_defines
-else
-export NIC_CSR_INCS := ${ASIC_INCL_DIR}/elba/model/elb_top \
+    ${ASIC_INCL_DIR}/capri/model/cap_top/csr_defines \
+    ${ASIC_INCL_DIR}/elba/model/elb_top \
     ${ASIC_INCL_DIR}/elba/model/utils \
     ${ASIC_INCL_DIR}/elba/model/elb_prd \
     ${ASIC_INCL_DIR}/elba/model/elb_top \
@@ -115,4 +113,4 @@ export NIC_CSR_INCS := ${ASIC_INCL_DIR}/elba/model/elb_top \
     ${ASIC_INCL_DIR}/elba/design/common/gen \
     ${ASIC_INCL_DIR}/elba/verif/apis \
     ${ASIC_INCL_DIR}/elba/model/elb_top/csr_defines
-endif
+
