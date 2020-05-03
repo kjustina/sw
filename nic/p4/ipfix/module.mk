@@ -9,7 +9,7 @@ MODULE_NCC_OPTS = --p4-plus --pd-gen --asm-out --no-ohi --asic elba \
                   --gen-dir ${BLD_P4GEN_DIR}
 else
 MODULE_NCC_OPTS = --p4-plus --pd-gen --asm-out --no-ohi \
-                  --two-byte-profile --fe-flags=" -I${TOPDIR} -I${SDKDIR}" \
+                  --two-byte-profile --fe-flags="-I${TOPDIR} -I${SDKDIR}" \
                   --gen-dir ${BLD_P4GEN_DIR}
 endif
 MODULE_DEPS     = $(shell find ${MODULE_DIR} -name '*.p4' -o -name '*.h') \
