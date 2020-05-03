@@ -719,6 +719,7 @@ elba_deparser_init(int tm_port_ingress, int tm_port_egress)
     // Egress deparser is indexed with 0
     elb0.dpr.dpr[0].cfg_global_2.read();
     elb0.dpr.dpr[0].cfg_global_2.increment_recirc_cnt_en(0);
+    elb0.dpr.dpr[0].cfg_global_2.frame_size_rw_bm(0xffff);
     elb0.dpr.dpr[0].cfg_global_2.write();
 }
 
