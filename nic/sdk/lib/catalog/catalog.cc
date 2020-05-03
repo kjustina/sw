@@ -777,7 +777,8 @@ catalog::factory(std::string catalog_file_path, std::string catalog_file_name,
 
     if (catalog_file_name.empty()) {
 
-        if (platform == platform_type_t::PLATFORM_TYPE_HW) {
+        if ((platform == platform_type_t::PLATFORM_TYPE_HW) ||
+		(platform == platform_type_t::PLATFORM_TYPE_HAPS)) {
             std::string part_num(32, '\0');
             std::string part_id;
 
