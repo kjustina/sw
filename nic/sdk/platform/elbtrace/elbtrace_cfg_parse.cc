@@ -1,5 +1,5 @@
 //
-// {C} Copyright 2019 Pensando Systems Inc. All rights reserved
+// {C} Copyright 2020 Pensando Systems Inc. All rights reserved
 //
 //===----------------------------------------------------------------------===//
 ///
@@ -142,19 +142,18 @@ mputrace_json_get_pc_addr (std::string pgm_or_lbl, int hi_lo)
         pgm_base = strtoul(pgm.second.get<std::string>("end_addr_hex").c_str(), NULL, 16);
       }
       if (is_pgm && pgm.second.get<std::string>("name") == pgm_or_lbl) {
-	return pgm_base;
+    return pgm_base;
       } else {
-	for (auto lbl : pgm.second.get_child("symbols")) {
-	  if (lbl.second.get<std::string>("name") == pgm_or_lbl) {
-	    return pgm_base + strtoul(lbl.second.get<std::string>("addr_hex").c_str(), NULL, 16);
-	  }
-	}
+    for (auto lbl : pgm.second.get_child("symbols")) {
+      if (lbl.second.get<std::string>("name") == pgm_or_lbl) {
+        return pgm_base + strtoul(lbl.second.get<std::string>("addr_hex").c_str(), NULL, 16);
       }
     }
-    
+      }
+    }
+
     return 0;
 }
-
 
 static inline void
 mputrace_json_ctrl_watch_pc_parse (ptree &pt, mputrace_cfg_inst_t *cfg_inst)
@@ -192,10 +191,7 @@ mputrace_json_ctrl_watch_pc_parse (ptree &pt, mputrace_cfg_inst_t *cfg_inst)
     if (str) {
       cfg_inst->ctrl.watch_pc.addr_hi = mputrace_json_get_pc_addr(str.get(), 1);
     }
-
-
 }
-
 
 static inline void
 mputrace_json_ctrl_watch_data_parse (ptree &pt, mputrace_cfg_inst_t *cfg_inst)
@@ -249,7 +245,6 @@ mputrace_json_ctrl_watch_data_parse (ptree &pt, mputrace_cfg_inst_t *cfg_inst)
 
 }
 
-
 static inline void
 mputrace_json_ctrl_parse (ptree &pt, mputrace_cfg_inst_t *cfg_inst)
 {
@@ -286,9 +281,6 @@ mputrace_json_ctrl_parse (ptree &pt, mputrace_cfg_inst_t *cfg_inst)
 
 
 }
-
-
-
 
 static inline void
 mputrace_json_capture_parse (ptree &pt, mputrace_cfg_inst_t *cfg_inst)

@@ -1,5 +1,5 @@
 //
-// {C} Copyright 2019 Pensando Systems Inc. All rights reserved
+// {C} Copyright 2020 Pensando Systems Inc. All rights reserved
 //
 //===----------------------------------------------------------------------===//
 ///
@@ -48,7 +48,7 @@ mputrace_error (char *argv[])
 }
 
 static inline void
-mputrace_capri_init()
+mputrace_capri_init(void)
 {
 #ifdef __x86_64__
     assert(sdk::lib::pal_init(platform_type_t::PLATFORM_TYPE_SIM) ==

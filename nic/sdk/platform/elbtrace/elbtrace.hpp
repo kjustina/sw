@@ -1,5 +1,5 @@
 //
-// {C} Copyright 2019 Pensando Systems Inc. All rights reserved
+// {C} Copyright 2020 Pensando Systems Inc. All rights reserved
 //
 //===----------------------------------------------------------------------===//
 ///
@@ -74,27 +74,27 @@ typedef enum mputrace_op_type_s {
 
 // watch_pc options
 typedef struct mputrace_cfg_inst_watch_pc_s {
-    uint8_t trace;     
-    uint8_t count;    
-    uint8_t intr;    
-    uint8_t stop;    
-    uint8_t exception;    
-    uint64_t addr_lo;   
-    uint64_t addr_hi;   
+    uint8_t trace;
+    uint8_t count;
+    uint8_t intr;
+    uint8_t stop;
+    uint8_t exception;
+    uint64_t addr_lo;
+    uint64_t addr_hi;
 } mputrace_cfg_inst_watch_pc_t;
 
 // watch_data options
 typedef struct mputrace_cfg_inst_watch_data_s {
-    uint8_t rtrace;     
-    uint8_t wtrace;     
-    uint8_t rintr;    
-    uint8_t wintr;    
-    uint8_t rstop;    
-    uint8_t wstop;    
-    uint8_t rexception;    
-    uint8_t wexception;    
-    uint64_t addr_lo;   
-    uint64_t addr_hi;   
+    uint8_t rtrace;
+    uint8_t wtrace;
+    uint8_t rintr;
+    uint8_t wintr;
+    uint8_t rstop;
+    uint8_t wstop;
+    uint8_t rexception;
+    uint8_t wexception;
+    uint64_t addr_lo;
+    uint64_t addr_hi;
 } mputrace_cfg_inst_watch_data_t;
 
 // ctrl options
@@ -158,23 +158,23 @@ typedef struct mputrace_trace_hdr_s {
     uint32_t trace_size;
 
   //watch_pc
-  uint8_t   wpc_trace;     
-  uint8_t   wpc_count;     
-  uint8_t   wpc_intr;      
-  uint8_t   wpc_stop;      
-  uint8_t   wpc_exception; 
-  uint64_t  wpc_addr_lo;   
-  uint64_t  wpc_addr_hi;   
-  
+  uint8_t   wpc_trace;
+  uint8_t   wpc_count;
+  uint8_t   wpc_intr;
+  uint8_t   wpc_stop;
+  uint8_t   wpc_exception;
+  uint64_t  wpc_addr_lo;
+  uint64_t  wpc_addr_hi;
+
   //watch_data
   uint8_t  wdata_rtrace;
   uint8_t  wdata_wtrace;
-  uint8_t  wdata_rintr;  
-  uint8_t  wdata_wintr;  
-  uint8_t  wdata_rstop;  
-  uint8_t  wdata_wstop;  
-  uint8_t  wdata_rexception; 
-  uint8_t  wdata_wexception; 
+  uint8_t  wdata_rintr;
+  uint8_t  wdata_wintr;
+  uint8_t  wdata_rstop;
+  uint8_t  wdata_wstop;
+  uint8_t  wdata_rexception;
+  uint8_t  wdata_wexception;
   uint64_t wdata_addr_lo;
   uint64_t wdata_addr_hi;
 

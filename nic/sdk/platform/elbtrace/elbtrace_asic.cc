@@ -1,5 +1,5 @@
 //
-// {C} Copyright 2019 Pensando Systems Inc. All rights reserved
+// {C} Copyright 2020 Pensando Systems Inc. All rights reserved
 //
 //===----------------------------------------------------------------------===//
 ///
@@ -31,30 +31,31 @@ mputrace_util_size_get (elb_mpu_csr_trace_t trace)
 }
 
 static inline int
-mputrace_util_is_enabled (elb_mpu_csr_trace_t trace, 
-			  elb_mpu_csr_watch_pc_t watch_pc, 
-			  elb_mpu_csr_watch_data_t watch_data)
+mputrace_util_is_enabled (elb_mpu_csr_trace_t trace,
+                          elb_mpu_csr_watch_pc_t watch_pc,
+                          elb_mpu_csr_watch_data_t watch_data)
 {
     trace.read();
     watch_pc.read();
     watch_data.read();
+
     return (int)trace.int_var__enable || (int)trace.int_var__trace_enable ||
-      (int)trace.int_var__phv_debug || (int)trace.int_var__phv_error
-      || (int)watch_pc.int_var__trace
-      || (int)watch_data.int_var__rtrace
-      || (int)watch_data.int_var__wtrace;
+        (int)trace.int_var__phv_debug || (int)trace.int_var__phv_error
+        || (int)watch_pc.int_var__trace
+        || (int)watch_data.int_var__rtrace
+        || (int)watch_data.int_var__wtrace;
 }
 
 // Sets the register flags in the ASIC
 static inline int
 mputrace_util_reg_program (elb_mpu_csr_trace_t &trace,
-			   elb_mpu_csr_watch_pc_t &watch_pc,
-			   elb_mpu_csr_watch_data_t &watch_data,
+                           elb_mpu_csr_watch_pc_t &watch_pc,
+                           elb_mpu_csr_watch_data_t &watch_data,
                            mputrace_cfg_inst_t *cfg_inst, mem_addr_t base_addr,
                            bool enable_all)
 {
 
-  ///TRACE 
+  ///TRACE
     trace.read();
 
     trace.phv_debug(cfg_inst->ctrl.phv_debug);
@@ -100,8 +101,6 @@ mputrace_util_reg_program (elb_mpu_csr_trace_t &trace,
     watch_data.addr_hi(cfg_inst->ctrl.watch_data.addr_hi);
     watch_data.write();
 
-
-
     return 0;
 }
 
@@ -114,13 +113,12 @@ mputrace_util_reg_program (elb_mpu_csr_trace_t &trace,
 static inline bool
 mputrace_cfg_enable_all_get (mputrace_cfg_inst_t *cfg_inst)
 {
-    bool enable_all =
-      !(cfg_inst->ctrl.trace_enable      || 
-	cfg_inst->ctrl.phv_debug         ||
-	cfg_inst->ctrl.phv_error         ||
-	cfg_inst->ctrl.watch_pc.trace    ||
-        cfg_inst->ctrl.watch_data.rtrace ||
-        cfg_inst->ctrl.watch_data.wtrace);
+    bool enable_all = !(cfg_inst->ctrl.trace_enable      ||
+                        cfg_inst->ctrl.phv_debug         ||
+                        cfg_inst->ctrl.phv_error         ||
+                        cfg_inst->ctrl.watch_pc.trace    ||
+                        cfg_inst->ctrl.watch_data.rtrace ||
+                        cfg_inst->ctrl.watch_data.wtrace);
 
     return enable_all;
 }
@@ -128,34 +126,36 @@ mputrace_cfg_enable_all_get (mputrace_cfg_inst_t *cfg_inst)
 static inline bool
 mputrace_is_cfg_enabled (int pipeline, int stage_id, int mpu,
                          elb_mpu_csr_trace_t &trace,
-			 elb_mpu_csr_watch_pc_t &watch_pc,
+                         elb_mpu_csr_watch_pc_t &watch_pc,
                          elb_mpu_csr_watch_data_t &watch_data)
 {
-  if (mputrace_util_is_enabled(trace, watch_pc, watch_data)) {
+    if (mputrace_util_is_enabled(trace, watch_pc, watch_data)) {
         cout << "Warning: MPU trace for pipeline : "
-             << mputrace_pipeline_str_get(pipeline).c_str()
-             << ", stage : " << stage_id << ", mpu : " << mpu
-             << " is already enabled. "
-                "Ignoring the current config instance."
-             << endl;
+            << mputrace_pipeline_str_get(pipeline).c_str()
+            << ", stage : " << stage_id << ", mpu : " << mpu
+            << " is already enabled. " "Ignoring the current config instance."
+            << endl;
         return TRUE;
     }
+
     return FALSE;
 }
 
 static inline void
 mputrace_cfg_elba_mpu_trace_enable (int pipeline, int stage_id, int mpu,
-				    elb_mpu_csr_trace_t &trace,
-				    elb_mpu_csr_watch_pc_t &watch_pc,
-				    elb_mpu_csr_watch_data_t &watch_data,
-                                     mputrace_cfg_inst_t *cfg_inst)
+                                    elb_mpu_csr_trace_t &trace,
+                                    elb_mpu_csr_watch_pc_t &watch_pc,
+                                    elb_mpu_csr_watch_data_t &watch_data,
+                                    mputrace_cfg_inst_t *cfg_inst)
 {
     static mem_addr_t trace_addr = g_state.trace_base;
     bool enable_all = mputrace_cfg_enable_all_get(cfg_inst);
 
-    if (mputrace_is_cfg_enabled(pipeline, stage_id, mpu, trace, watch_pc, watch_data)) {
+    if (mputrace_is_cfg_enabled(pipeline, stage_id, mpu, trace,
+                                watch_pc, watch_data)) {
         return;
     }
+
     if (trace_addr + (cfg_inst->settings.trace_size * TRACE_ENTRY_SIZE) >=
         g_state.trace_end) {
         cout << "Specified trace size exceeds the trace_end boundary. "
@@ -163,6 +163,7 @@ mputrace_cfg_elba_mpu_trace_enable (int pipeline, int stage_id, int mpu,
              << endl;
         exit(EXIT_FAILURE);
     }
+
     if ((trace_addr & ADDR_BOUNDARY) != 0x0) {
         cout << "trace_addr " << trace_addr
              << "does not overlap with "
@@ -170,7 +171,9 @@ mputrace_cfg_elba_mpu_trace_enable (int pipeline, int stage_id, int mpu,
              << ADDR_BOUNDARY;
         exit(EXIT_FAILURE);
     }
-    mputrace_util_reg_program(trace, watch_pc, watch_data, cfg_inst, trace_addr, enable_all);
+
+    mputrace_util_reg_program(trace, watch_pc, watch_data,
+                              cfg_inst, trace_addr, enable_all);
     trace_addr += (cfg_inst->settings.trace_size * TRACE_ENTRY_SIZE);
 }
 
@@ -183,31 +186,31 @@ mputrace_cfg_mpu_program (int pipeline, int stage_id, int mpu,
     switch (pipeline) {
     case TXDMA:
         mputrace_cfg_elba_mpu_trace_enable(pipeline, stage_id, mpu,
-                                            elb0.pct.stg[stage_id].mpu[mpu].trace,
-                                            elb0.pct.stg[stage_id].mpu[mpu].watch_pc,
-                                            elb0.pct.stg[stage_id].mpu[mpu].watch_data,
-                                            cfg_inst);
+                                           elb0.pct.stg[stage_id].mpu[mpu].trace,
+                                           elb0.pct.stg[stage_id].mpu[mpu].watch_pc,
+                                           elb0.pct.stg[stage_id].mpu[mpu].watch_data,
+                                           cfg_inst);
         break;
     case RXDMA:
         mputrace_cfg_elba_mpu_trace_enable(pipeline, stage_id, mpu,
-                                            elb0.pcr.stg[stage_id].mpu[mpu].trace,
-                                            elb0.pcr.stg[stage_id].mpu[mpu].watch_pc,
-                                            elb0.pcr.stg[stage_id].mpu[mpu].watch_data,
-                                            cfg_inst);
+                                           elb0.pcr.stg[stage_id].mpu[mpu].trace,
+                                           elb0.pcr.stg[stage_id].mpu[mpu].watch_pc,
+                                           elb0.pcr.stg[stage_id].mpu[mpu].watch_data,
+                                           cfg_inst);
         break;
     case P4IG:
         mputrace_cfg_elba_mpu_trace_enable(pipeline, stage_id, mpu,
-                                            elb0.sgi.stg[stage_id].mpu[mpu].trace,
-                                            elb0.sgi.stg[stage_id].mpu[mpu].watch_pc,
-                                            elb0.sgi.stg[stage_id].mpu[mpu].watch_data,
-                                            cfg_inst);
+                                           elb0.sgi.stg[stage_id].mpu[mpu].trace,
+                                           elb0.sgi.stg[stage_id].mpu[mpu].watch_pc,
+                                           elb0.sgi.stg[stage_id].mpu[mpu].watch_data,
+                                           cfg_inst);
         break;
     case P4EG:
         mputrace_cfg_elba_mpu_trace_enable(pipeline, stage_id, mpu,
-                                            elb0.sge.stg[stage_id].mpu[mpu].trace,
-                                            elb0.sge.stg[stage_id].mpu[mpu].watch_pc,
-                                            elb0.sge.stg[stage_id].mpu[mpu].watch_data,
-                                            cfg_inst);
+                                           elb0.sge.stg[stage_id].mpu[mpu].trace,
+                                           elb0.sge.stg[stage_id].mpu[mpu].watch_pc,
+                                           elb0.sge.stg[stage_id].mpu[mpu].watch_data,
+                                           cfg_inst);
         break;
     default:
         cout << "Unknown pipeline type " << pipeline << ", stage " << stage_id
@@ -216,8 +219,8 @@ mputrace_cfg_mpu_program (int pipeline, int stage_id, int mpu,
     }
 }
 
-  static inline void
-mputrace_cfg_reset ()
+static inline void
+mputrace_cfg_reset (void)
 {
     static bool mputrace_reset_cfg = true;
 
@@ -241,10 +244,10 @@ mputrace_cfg_trace (int pipeline, int stage, int mpu,
 
 static inline void
 mputrace_dump_trace_hdr_fill (mputrace_trace_hdr_t *trace_hdr,
-                              elb_mpu_csr_trace_t trace, 
-                              elb_mpu_csr_watch_pc_t watch_pc, 
-                              elb_mpu_csr_watch_data_t watch_data, 
-			      int pipeline,
+                              elb_mpu_csr_trace_t trace,
+                              elb_mpu_csr_watch_pc_t watch_pc,
+                              elb_mpu_csr_watch_data_t watch_data,
+                              int pipeline,
                               int stage, int mpu)
 {
     trace_hdr->pipeline_num = pipeline;
@@ -281,19 +284,18 @@ mputrace_dump_trace_hdr_fill (mputrace_trace_hdr_t *trace_hdr,
     trace_hdr->wdata_wexception = (uint32_t)watch_data.wexception();
     trace_hdr->wdata_addr_lo = (uint64_t)watch_data.addr_lo();
     trace_hdr->wdata_addr_hi = (uint64_t)watch_data.addr_hi();
-
 }
 
 static inline void
-mputrace_dump_trace_hdr_write (elb_mpu_csr_trace_t trace, 
-			       elb_mpu_csr_watch_pc_t watch_pc, 
-			       elb_mpu_csr_watch_data_t watch_data, 
-			       int pipeline,
-                               int stage, int mpu, FILE *fp)
+mputrace_dump_trace_hdr_write (elb_mpu_csr_trace_t trace,
+                               elb_mpu_csr_watch_pc_t watch_pc,
+                               elb_mpu_csr_watch_data_t watch_data,
+                               int pipeline, int stage, int mpu, FILE *fp)
 {
     mputrace_trace_hdr_t trace_hdr = {};
 
-    mputrace_dump_trace_hdr_fill(&trace_hdr, trace, watch_pc, watch_data, pipeline, stage, mpu);
+    mputrace_dump_trace_hdr_fill(&trace_hdr, trace, watch_pc,
+                                 watch_data, pipeline, stage, mpu);
     fwrite(&trace_hdr, sizeof(uint8_t), sizeof(trace_hdr), fp);
 }
 
@@ -312,11 +314,10 @@ mputrace_dump_trace_info_write (elb_mpu_csr_trace_t trace, FILE *fp)
 }
 
 static inline void
-mputrace_dump_trace_file_write (elb_mpu_csr_trace_t trace, 
-				elb_mpu_csr_watch_pc_t watch_pc, 
-				elb_mpu_csr_watch_data_t watch_data, 
-				int pipeline,
-                                int stage, int mpu)
+mputrace_dump_trace_file_write (elb_mpu_csr_trace_t trace,
+                                elb_mpu_csr_watch_pc_t watch_pc,
+                                elb_mpu_csr_watch_data_t watch_data,
+                                int pipeline, int stage, int mpu)
 {
     static FILE *fp = fopen(g_state.MPUTRACE_DUMP_FILE, "wb");
 
@@ -329,7 +330,8 @@ mputrace_dump_trace_file_write (elb_mpu_csr_trace_t trace,
         exit(EXIT_FAILURE);
     }
 
-    mputrace_dump_trace_hdr_write(trace, watch_pc, watch_data, pipeline, stage, mpu, fp);
+    mputrace_dump_trace_hdr_write(trace, watch_pc, watch_data,
+                                  pipeline, stage, mpu, fp);
     mputrace_dump_trace_info_write(trace, fp);
 }
 
@@ -339,14 +341,13 @@ mputrace_dump_pipeline_info_fetch (int stage_count, elb_stg_csr_t *stg_ptr,
 {
     for (int stage = 0; stage < stage_count; stage++) {
         for (int mpu = 0; mpu < MPUTRACE_MAX_MPU; mpu++) {
-	  if (mputrace_util_is_enabled(stg_ptr[stage].mpu[mpu].trace,
-				       stg_ptr[stage].mpu[mpu].watch_pc,
-				       stg_ptr[stage].mpu[mpu].watch_data)) {
-                mputrace_dump_trace_file_write(stg_ptr[stage].mpu[mpu].trace, 
-					       stg_ptr[stage].mpu[mpu].watch_pc, 
-					       stg_ptr[stage].mpu[mpu].watch_data, 
-					       pipeline,
-                                               stage, mpu);
+      if (mputrace_util_is_enabled(stg_ptr[stage].mpu[mpu].trace,
+                       stg_ptr[stage].mpu[mpu].watch_pc,
+                       stg_ptr[stage].mpu[mpu].watch_data)) {
+                mputrace_dump_trace_file_write(stg_ptr[stage].mpu[mpu].trace,
+                                               stg_ptr[stage].mpu[mpu].watch_pc,
+                                               stg_ptr[stage].mpu[mpu].watch_data,
+                                               pipeline, stage, mpu);
             }
         }
         stg_ptr++;
@@ -354,7 +355,7 @@ mputrace_dump_pipeline_info_fetch (int stage_count, elb_stg_csr_t *stg_ptr,
 }
 
 static inline void
-mputrace_dump_all_pipelines ()
+mputrace_dump_all_pipelines (void)
 {
     int stage_count = 0;
     elb_top_csr_t &elb0 = ELB_BLK_REG_MODEL_ACCESS(elb_top_csr_t, 0, 0);
@@ -381,8 +382,8 @@ mputrace_dump (const char *dump_file)
 
 static inline void
 mputrace_reset_buffer_erase (elb_mpu_csr_trace_t trace,
-			     elb_mpu_csr_watch_pc_t watch_pc,
-			     elb_mpu_csr_watch_data_t watch_data)
+                             elb_mpu_csr_watch_pc_t watch_pc,
+                             elb_mpu_csr_watch_data_t watch_data)
 {
     mem_addr_t trace_addr = 0;
     uint32_t trace_size = 0;
@@ -403,17 +404,17 @@ mputrace_reset_pipeline (int stage_count, elb_stg_csr_t *stg_ptr,
 {
     for (int s = 0; s < stage_count; s++) {
         for (int mpu = 0; mpu < MPUTRACE_MAX_MPU; mpu++) {
-	  mputrace_reset_buffer_erase(stg_ptr[s].mpu[mpu].trace,
-				      stg_ptr[s].mpu[mpu].watch_pc,
-				      stg_ptr[s].mpu[mpu].watch_data);
-            mputrace_util_reg_program(stg_ptr[s].mpu[mpu].trace, 
-				      stg_ptr[s].mpu[mpu].watch_pc, 
-				      stg_ptr[s].mpu[mpu].watch_data, 
-				      cfg_inst, 0, false);
-        printf("%10" PRIu32 
-	       " %10" PRIu32 "\n",
-               s, 
-	       mpu);
+      mputrace_reset_buffer_erase(stg_ptr[s].mpu[mpu].trace,
+                      stg_ptr[s].mpu[mpu].watch_pc,
+                      stg_ptr[s].mpu[mpu].watch_data);
+            mputrace_util_reg_program(stg_ptr[s].mpu[mpu].trace,
+                      stg_ptr[s].mpu[mpu].watch_pc,
+                      stg_ptr[s].mpu[mpu].watch_data,
+                      cfg_inst, 0, false);
+        printf("%10" PRIu32
+           " %10" PRIu32 "\n",
+               s,
+           mpu);
         }
         //stg_ptr++;
     }
@@ -438,7 +439,7 @@ mputrace_reset_all_pipelines (elb_top_csr_t &elb0)
 }
 
 void
-mputrace_reset ()
+mputrace_reset (void)
 {
     elb_top_csr_t &elb0 = ELB_BLK_REG_MODEL_ACCESS(elb_top_csr_t, 0, 0);
     mputrace_reset_all_pipelines(elb0);
@@ -451,8 +452,8 @@ mputrace_reset ()
 
 static inline void
 mputrace_show_pipeline_internal (elb_mpu_csr_trace_t trace,
-				 elb_mpu_csr_watch_pc_t watch_pc,
-				 elb_mpu_csr_watch_data_t watch_data,
+                                 elb_mpu_csr_watch_pc_t watch_pc,
+                                 elb_mpu_csr_watch_data_t watch_data,
                                  mputrace_cfg_inst_t *cfg_inst, int stage,
                                  int mpu)
 {
@@ -462,74 +463,74 @@ mputrace_show_pipeline_internal (elb_mpu_csr_trace_t trace,
     cout << "elbtrace show_pipeline_internal" << endl;
     if (mputrace_util_is_enabled(trace, watch_pc, watch_data)) {
         printf("%10s"
-               "%10" PRIu32 
-	       " %10" PRIu32 
-	       " %10" PRIu8 
-	       " %10" PRIu8 
-	       " %10" PRIu8
-               " %10" PRIu8 
-	       " %10" PRIu8 
-	       " %10" PRIu8 
-	       " %10" PRIu8 
-	       " %10" PRIu8 
-	       " %10" PRIu8 
-	       " %10" PRIu8 
-	       " %10" PRIu8 
-	       " 0x%08" PRIx64
-	       " 0x%08" PRIx64
-	       " %10" PRIu8 
-	       " %10" PRIu8 
-	       " %10" PRIu8 
-	       " %10" PRIu8 
-	       " %10" PRIu8 
-	       " %10" PRIu8 
-	       " %10" PRIu8 
-	       " %10" PRIu8 
-	       " 0x%08" PRIx64
-	       " 0x%08" PRIx64
-               " %10" PRIu8 
-	       " %10" PRIu8 
-	       " 0x%08" PRIx64 
-	       " %10" PRIu32
+               "%10" PRIu32
+           " %10" PRIu32
+           " %10" PRIu8
+           " %10" PRIu8
+           " %10" PRIu8
+               " %10" PRIu8
+           " %10" PRIu8
+           " %10" PRIu8
+           " %10" PRIu8
+           " %10" PRIu8
+           " %10" PRIu8
+           " %10" PRIu8
+           " %10" PRIu8
+           " 0x%08" PRIx64
+           " 0x%08" PRIx64
+           " %10" PRIu8
+           " %10" PRIu8
+           " %10" PRIu8
+           " %10" PRIu8
+           " %10" PRIu8
+           " %10" PRIu8
+           " %10" PRIu8
+           " %10" PRIu8
+           " 0x%08" PRIx64
+           " 0x%08" PRIx64
+               " %10" PRIu8
+           " %10" PRIu8
+           " 0x%08" PRIx64
+           " %10" PRIu32
                " %10" PRIu32 "\n",
                // selectors
                mputrace_pipeline_str_get(g_state.pipeline_index - 1).c_str(),
                // g_state.pipeline_index,
-               stage, 
-	       mpu,
+               stage,
+           mpu,
                // ctrl
-               (uint32_t)trace.enable(), 
-	       (uint32_t)trace.wrap(),
+               (uint32_t)trace.enable(),
+           (uint32_t)trace.wrap(),
                (uint32_t)trace.rst(),
                // ctrl
-               (uint32_t)trace.trace_enable(), 
-	       (uint32_t)trace.phv_debug(),
-	       (uint32_t)trace.phv_error(), 
-	       //WATCH_PC
-	       //(uint64_t)(trace.watch_pc() << 3),
-	       (uint32_t)watch_pc.trace(),
-	       (uint32_t)watch_pc.count(),
-	       (uint32_t)watch_pc.intr(),
-	       (uint32_t)watch_pc.stop(),
-	       (uint32_t)watch_pc.exception(),
-	       (uint64_t)(watch_pc.addr_lo() << 3),
-	       (uint64_t)(watch_pc.addr_hi() << 3),
+               (uint32_t)trace.trace_enable(),
+           (uint32_t)trace.phv_debug(),
+           (uint32_t)trace.phv_error(),
+           //WATCH_PC
+           //(uint64_t)(trace.watch_pc() << 3),
+           (uint32_t)watch_pc.trace(),
+           (uint32_t)watch_pc.count(),
+           (uint32_t)watch_pc.intr(),
+           (uint32_t)watch_pc.stop(),
+           (uint32_t)watch_pc.exception(),
+           (uint64_t)(watch_pc.addr_lo() << 3),
+           (uint64_t)(watch_pc.addr_hi() << 3),
 
-	       ///WATCH_DATA
-	       (uint32_t)watch_data.rtrace(),
-	       (uint32_t)watch_data.wtrace(),
-	       (uint32_t)watch_data.rintr(),
-	       (uint32_t)watch_data.wintr(),
-	       (uint32_t)watch_data.rstop(),
-	       (uint32_t)watch_data.wstop(),
-	       (uint32_t)watch_data.rexception(),
-	       (uint32_t)watch_data.wexception(),
-	       (uint64_t)watch_data.addr_lo(),
-	       (uint64_t)watch_data.addr_hi(),
+           ///WATCH_DATA
+           (uint32_t)watch_data.rtrace(),
+           (uint32_t)watch_data.wtrace(),
+           (uint32_t)watch_data.rintr(),
+           (uint32_t)watch_data.wintr(),
+           (uint32_t)watch_data.rstop(),
+           (uint32_t)watch_data.wstop(),
+           (uint32_t)watch_data.rexception(),
+           (uint32_t)watch_data.wexception(),
+           (uint64_t)watch_data.addr_lo(),
+           (uint64_t)watch_data.addr_hi(),
 
                // content
-               (uint32_t)trace.table_and_key(), 
-	       (uint32_t)trace.instructions(),
+               (uint32_t)trace.table_and_key(),
+           (uint32_t)trace.instructions(),
                // location
                (long unsigned int)(trace.base_addr() << 6),
                (uint32_t)(MPUTRACE_ONE << (uint32_t)trace.buf_size()),
@@ -545,18 +546,18 @@ mputrace_show_pipeline (int stage_count, elb_stg_csr_t *stg_ptr,
     g_state.pipeline_index++;
     for (int stage = 0; stage < stage_count; stage++) {
         for (int mpu = 0; mpu < MPUTRACE_MAX_MPU; mpu++) {
-            mputrace_show_pipeline_internal(stg_ptr[stage].mpu[mpu].trace, 
-					    stg_ptr[stage].mpu[mpu].watch_pc, 
-					    stg_ptr[stage].mpu[mpu].watch_data, 
-					    cfg_inst,
-				    stage, mpu);
-}
+            mputrace_show_pipeline_internal(stg_ptr[stage].mpu[mpu].trace,
+                        stg_ptr[stage].mpu[mpu].watch_pc,
+                        stg_ptr[stage].mpu[mpu].watch_data,
+                        cfg_inst,
+                    stage, mpu);
+        }
         //stg_ptr++;
     }
 }
 
 static inline void
-mputrace_show_all_pipelines ()
+mputrace_show_all_pipelines (void)
 {
     int stage_count = 0;
     elb_top_csr_t &elb0 = ELB_BLK_REG_MODEL_ACCESS(elb_top_csr_t, 0, 0);
@@ -569,19 +570,19 @@ mputrace_show_all_pipelines ()
 }
 
 void
-mputrace_show ()
+mputrace_show (void)
 {
-    printf("%10s %10s %10s %10s %10s %10s %10s %10s %10s %10s " 
-	   "%10s %10s %10s %10s %10s %10s %10s %10s %10s %10s "
-	   "%10s %10s %10s %10s %10s %10s %10s %10s %10s %10s "
-	   "%10s\n",
-           "pipeline", "stage", "mpu", "enable", "wrap", 
-	   "reset", "trace", "phv_debug", "phv_error", "wpc_trace", 
-	   "wpc_count", "wpc_intr", "wpc_stop", "wpc_exception", "wpc_addr_lo", 
-	   "wpc_addr_hi", "wdata_rtrace",  "wdata_wtrace", "wdata_rintr", "wdata_wintr", 
-	   "wdata_rstop", "wdata_wstop", "wdata_rexception", "wdata_wexception", "wdata_addr_lo", 
-	   "wdata_addr_hi", "table_kd", "instr", "trace_addr", "trace_nent", 
-	   "trace_sz");
+    printf("%10s %10s %10s %10s %10s %10s %10s %10s %10s %10s "
+           "%10s %10s %10s %10s %10s %10s %10s %10s %10s %10s "
+           "%10s %10s %10s %10s %10s %10s %10s %10s %10s %10s "
+           "%10s\n",
+           "pipeline", "stage", "mpu", "enable", "wrap",
+           "reset", "trace", "phv_debug", "phv_error", "wpc_trace",
+           "wpc_count", "wpc_intr", "wpc_stop", "wpc_exception", "wpc_addr_lo",
+           "wpc_addr_hi", "wdata_rtrace",  "wdata_wtrace", "wdata_rintr", "wdata_wintr",
+           "wdata_rstop", "wdata_wstop", "wdata_rexception", "wdata_wexception", "wdata_addr_lo",
+           "wdata_addr_hi", "table_kd", "instr", "trace_addr", "trace_nent",
+           "trace_sz");
     mputrace_show_all_pipelines();
     cout << "elbtrace show success" << endl;
 }
