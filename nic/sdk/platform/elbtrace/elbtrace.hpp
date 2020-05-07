@@ -66,6 +66,10 @@ typedef enum mputrace_arg_types_s {
 } mputrace_arg_types_t;
 
 typedef enum mputrace_op_type_s {
+    SDPTRACE_CONFIG,
+    SDPTRACE_RESET,
+    SDPTRACE_DUMP,
+    SDPTRACE_SHOW,
     MPUTRACE_CONFIG,
     MPUTRACE_RESET,
     MPUTRACE_DUMP,

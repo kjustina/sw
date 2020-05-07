@@ -14,7 +14,6 @@
 #include "platform/elba/csrint/csr_init.hpp"
 #include "platform/csr/asicrw_if.hpp"
 #include "platform/elbtrace/elbtrace.hpp"
-#include "platform/elbtrace/elb_phv_intr.hpp"
 #include "lib/pal/pal.hpp"
 
 namespace sdk {
@@ -49,7 +48,7 @@ mputrace_error (char *argv[])
 }
 
 static inline void
-mputrace_capri_init(void)
+mputrace_elba_init(void)
 {
 #ifdef __x86_64__
     assert(sdk::lib::pal_init(platform_type_t::PLATFORM_TYPE_SIM) ==
@@ -83,7 +82,7 @@ mputrace_handle_options (int argc, char *argv[])
             exit(EXIT_FAILURE);
             break;
         }
-        mputrace_capri_init();
+        mputrace_elba_init();
         mputrace_cfg(argv[2]);
         break;
     case MPUTRACE_DUMP:
@@ -92,15 +91,15 @@ mputrace_handle_options (int argc, char *argv[])
             usage(argv);
             exit(EXIT_FAILURE);
         }
-        mputrace_capri_init();
+        mputrace_elba_init();
         mputrace_dump(argv[2]);
         break;
     case MPUTRACE_RESET:
-        mputrace_capri_init();
+        mputrace_elba_init();
         mputrace_reset();
         break;
     case MPUTRACE_SHOW:
-        mputrace_capri_init();
+        mputrace_elba_init();
         mputrace_show();
         break;
     default:
