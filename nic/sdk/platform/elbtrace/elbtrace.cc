@@ -14,6 +14,7 @@
 #include "platform/elba/csrint/csr_init.hpp"
 #include "platform/csr/asicrw_if.hpp"
 #include "platform/elbtrace/elbtrace.hpp"
+#include "platform/elbtrace/elb_phv_intr.hpp"
 #include "lib/pal/pal.hpp"
 
 namespace sdk {

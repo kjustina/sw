@@ -9,6 +9,7 @@
 //===----------------------------------------------------------------------===//
 
 #include "platform/elbtrace/elbtrace.hpp"
+#include "platform/elbtrace/elb_phv_intr.hpp"
 
 namespace sdk {
 namespace platform {

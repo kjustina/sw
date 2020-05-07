@@ -26,8 +26,8 @@
         "wstop": false
         "rexception": false
         "wexception": false
-        "addr_lo": "0xBLAH"
-        "addr_hi": "0xBLAH"
+        "addr_lo": "0x<addr>"
+        "addr_hi": "0x<addr>"
       },
       },
       "capture": {

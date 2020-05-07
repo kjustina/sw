@@ -5,9 +5,9 @@
       "stage": ".*",
       "mpu": ".*",
       "control": {
-        "trace": false,
-        "phv-debug": false,
-        "phv-error": false
+        "trace": true,
+        "phv-debug": true,
+        "phv-error": true
       },
       "capture": {
         "key-data": true,
