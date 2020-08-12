@@ -188,6 +188,7 @@ sdptrace_util_reg_program (elb_sdp_csr_cfg_sdp_axi_t &sdp_axi,
       trigger_data_val = hlp0.set_slc(trigger_data_val,cfg_inst->capture.trigger_data_p4, 0, 511);
     }
     sdp_trace_trigger.data(trigger_data_val);
+    //cout << "trigger_data_val " << hex << trigger_data_val << endl;
 
     cpp_int trigger_mask_val = sdp_trace_trigger.mask();
     cpp_int_helper hlp1;
@@ -202,6 +203,7 @@ sdptrace_util_reg_program (elb_sdp_csr_cfg_sdp_axi_t &sdp_axi,
     }
 
     sdp_trace_trigger.mask(trigger_mask_val);
+    //cout << "trigger_mask_val " << hex << trigger_mask_val << endl;
 
     sdp_trace_trigger.write();
 
@@ -788,14 +790,21 @@ sdptrace_dump_trace_hdr_fill (sdptrace_trace_hdr_t *trace_hdr,
     trace_hdr->ctl_ring_wr_ptr = (uint32_t)ctl_ptr.pointer();
     trace_hdr->phv_ring_wr_ptr = (uint32_t)phv_ptr.pointer();
     
+    trace_hdr->trace_trigger_enable = (uint32_t)sdp_trace_trigger.enable();
+
     cpp_int trigger_data_val = sdp_trace_trigger.data();
-    for (int i; i < 8; i++) {
+    //cout << "trace_data_val 0x" << hex << trigger_data_val << endl;
+    for (int i=7; i >= 0; i--) {
       trace_hdr->trigger_data[i] = (uint64_t)trigger_data_val;
       trigger_data_val = trigger_data_val >> 64;
     }
+    //for (int i=7; i >= 0; i--) {
+    //  cout << "trace hdr [i] " << hex << trace_hdr->trigger_data[i] << endl;
+    //}
 
     cpp_int trigger_mask_val = sdp_trace_trigger.mask();
-    for (int i; i < 8; i++) {
+    //cout << "trace_mask_val 0x" << hex << trigger_mask_val << endl;
+    for (int i=7; i >= 0; i--) {
       trace_hdr->trigger_mask[i] = (uint64_t)trigger_mask_val;
       trigger_mask_val = trigger_mask_val >> 64;
     }
@@ -852,8 +861,8 @@ static inline void
 sdptrace_dump_trace_hdr_write (elb_sdp_csr_sta_sdp_axi_write_control_t ctl_ptr,
 				 elb_sdp_csr_sta_sdp_axi_write_phv_t phv_ptr,
 				 elb_sdp_csr_cfg_sdp_axi_t sdp_axi, 
-				 elb_sdp_csr_cfg_sdp_axi_sw_reset_t &sdp_axi_sw_reset,
-				 elb_sdp_csr_cfg_sdp_trace_trigger_t &sdp_trace_trigger,
+				 elb_sdp_csr_cfg_sdp_axi_sw_reset_t sdp_axi_sw_reset,
+				 elb_sdp_csr_cfg_sdp_trace_trigger_t sdp_trace_trigger,
 				 int pipeline, int stage, FILE *fp)
 {
     sdptrace_trace_hdr_t trace_hdr = {};
@@ -955,6 +964,7 @@ dmatrace_dump_trace_info_write (elb_top_csr_t &elb0,
       sdk::lib::pal_mem_read(prd_trace_addr, buf, sizeof(buf));
       fwrite(buf, sizeof(buf[0]), sizeof(buf), fp);
       prd_trace_addr += sizeof(buf);
+      //cout << "prd_trace_addr = " << hex << prd_trace_addr << endl;
     }
   }
   else if (mod_name == "ptd") {
@@ -962,6 +972,7 @@ dmatrace_dump_trace_info_write (elb_top_csr_t &elb0,
       sdk::lib::pal_mem_read(ptd_trace_addr, buf, sizeof(buf));
       fwrite(buf, sizeof(buf[0]), sizeof(buf), fp);
       ptd_trace_addr += sizeof(buf);
+      //cout << "ptd_trace_addr = " << hex << ptd_trace_addr << endl;
     }
   }
   else  {
@@ -969,6 +980,8 @@ dmatrace_dump_trace_info_write (elb_top_csr_t &elb0,
       sdk::lib::pal_mem_read(xd_trace_addr, buf, sizeof(buf));
       fwrite(buf, sizeof(buf[0]), sizeof(buf), fp);
       xd_trace_addr += sizeof(buf);
+      //cout << "xd_trace_size = " << hex << xd_trace_size << endl;
+      //cout << "xd_trace_addr = " << hex << xd_trace_addr << endl;
     }
   }
 
@@ -1000,13 +1013,15 @@ static inline void
 sdptrace_dump_trace_file_write (elb_sdp_csr_sta_sdp_axi_write_control_t ctl_ptr,
 				elb_sdp_csr_sta_sdp_axi_write_phv_t phv_ptr,
 				elb_sdp_csr_cfg_sdp_axi_t sdp_axi, 
-				elb_sdp_csr_cfg_sdp_axi_sw_reset_t &sdp_axi_sw_reset,
-				elb_sdp_csr_cfg_sdp_trace_trigger_t &sdp_trace_trigger,
+				elb_sdp_csr_cfg_sdp_axi_sw_reset_t sdp_axi_sw_reset,
+				elb_sdp_csr_cfg_sdp_trace_trigger_t sdp_trace_trigger,
                                 int pipeline, int stage)
 {
     static FILE *fp = fopen(g_state.ELBTRACE_DUMP_FILE, "wb");
 
     sdp_axi.read();
+    sdp_axi_sw_reset.read();
+    sdp_trace_trigger.read();
     ctl_ptr.read();
     phv_ptr.read();
     if (fp == NULL) {
@@ -1111,9 +1126,23 @@ dmatrace_dump_all_pipelines (void)
     int stage_count = 0;
     elb_top_csr_t &elb0 = ELB_BLK_REG_MODEL_ACCESS(elb_top_csr_t, 0, 0);
 
-    dmatrace_dump_trace_file_write(elb0, 0, "prd"); 
-    dmatrace_dump_trace_file_write(elb0, 1, "ptd"); 
-    dmatrace_dump_trace_file_write(elb0, 2, "xd"); //todo: check values
+    elb_prd_csr_cfg_trace_t prd_trace = elb0.pr.pr.prd.cfg_trace;
+    elb_ptd_csr_cfg_trace_t ptd_trace = elb0.pt.pt.ptd.cfg_trace;
+    elb_ptd_csr_cfg_trace_t xd_trace  = elb0.xd.pt.ptd.cfg_trace;
+    
+    prd_trace.read();
+    ptd_trace.read();
+    xd_trace.read();
+    
+    if ( (int)prd_trace.int_var__enable) {
+      dmatrace_dump_trace_file_write(elb0, 0, "prd"); 
+    }
+    if ( (int)ptd_trace.int_var__enable) {
+      dmatrace_dump_trace_file_write(elb0, 1, "ptd"); 
+    }
+    if ( (int)xd_trace.int_var__enable) {
+      dmatrace_dump_trace_file_write(elb0, 2, "xd"); //todo: check values
+    }
 }
 
 void
@@ -1652,6 +1681,36 @@ sdptrace_show_pipeline_internal (elb_sdp_csr_cfg_sdp_axi_t &sdp_axi,
                (uint32_t)(sdp_axi.ring_size()));
 	       //               (uint32_t)(ELBTRACE_ONE << sdp_axi.ring_size()));
 
+	//cpp_int trigger_data_val = sdp_trace_trigger.data();
+	//cout << "Trigger Data 0x" << hex << trigger_data_val << endl;
+	
+	//cpp_int trigger_mask_val = sdp_trace_trigger.mask();
+	//cout << "Trigger Mask 0x" << hex << trigger_mask_val << endl;
+
+    }
+}
+
+static inline void
+sdptrace_show_trace_trigger (elb_sdp_csr_cfg_sdp_axi_t &sdp_axi,
+			     elb_sdp_csr_cfg_sdp_trace_trigger_t &sdp_trace_trigger, 
+			     int stage, int pipeline)
+{
+    sdp_axi.read();
+    sdp_trace_trigger.read();
+
+    if ( (int)sdp_axi.int_var__enable ) {
+        printf("\n pipeline: %1s  "
+               "stage: %1" PRIu32 "\n",
+
+               mputrace_pipeline_str_get(pipeline).c_str(),
+               stage);
+
+	cpp_int trigger_data_val = sdp_trace_trigger.data();
+	cout << "Trigger Data = 0x" << hex << trigger_data_val << endl;
+	
+	cpp_int trigger_mask_val = sdp_trace_trigger.mask();
+	cout << "Trigger Mask = 0x" << hex << trigger_mask_val << endl;
+
     }
 }
 
@@ -1670,6 +1729,19 @@ sdptrace_show_pipeline (int stage_count, elb_stg_csr_t *stg_ptr,
 }
 
 static inline void
+sdptrace_show_pipeline_trigger (int stage_count, elb_stg_csr_t *stg_ptr, 
+				int pipeline)
+{
+
+    for (int stage = 0; stage < stage_count; stage++) {
+      sdptrace_show_trace_trigger(stg_ptr[stage].sdp.cfg_sdp_axi,	    
+				  stg_ptr[stage].sdp.cfg_sdp_trace_trigger,
+				  stage,
+				  pipeline);
+    }
+}
+
+static inline void
 sdptrace_show_all_pipelines (void)
 {
     int stage_count = 0;
@@ -1681,6 +1753,13 @@ sdptrace_show_all_pipelines (void)
     ELBTRACE_FOR_EACH_PIPELINE(elb0.pcr, sdptrace_show_pipeline, &cfg_inst);
     ELBTRACE_FOR_EACH_PIPELINE(elb0.pct, sdptrace_show_pipeline, &cfg_inst);
     ELBTRACE_FOR_EACH_PIPELINE(elb0.xg,  sdptrace_show_pipeline, &cfg_inst);
+
+    ELBTRACE_FOR_EACH_PIPELINE(elb0.sgi, sdptrace_show_pipeline_trigger, 0);
+    ELBTRACE_FOR_EACH_PIPELINE(elb0.sge, sdptrace_show_pipeline_trigger, 1);
+    ELBTRACE_FOR_EACH_PIPELINE(elb0.pcr, sdptrace_show_pipeline_trigger, 2);
+    ELBTRACE_FOR_EACH_PIPELINE(elb0.pct, sdptrace_show_pipeline_trigger, 3);
+    ELBTRACE_FOR_EACH_PIPELINE(elb0.xg,  sdptrace_show_pipeline_trigger, 4);
+
 }
 
 void

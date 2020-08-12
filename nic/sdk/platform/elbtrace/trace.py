@@ -180,12 +180,13 @@ def decode_mpu_trace_file(bytez):
         # print(ctypes_pformat(fhdr))
         s += sizeof(TraceFileHeader)
 
-        #print(sizeof(TraceFileHeader))
-        #print("\n>>> Trace config HDR : 0x{:0128x}\n".format(int.from_bytes(fhdr, byteorder='big')))
-        #for fld in (fhdr._fields_):
-        #    if not fld[0].startswith('_'):
-        #        if fld[0].startswith('pipeline'):
-        #            print("{:50} {:#x} ({})".format(fld[0], getattr(fhdr, fld[0]), PIPELINE(getattr(fhdr, fld[0])).name))
+        #debug info
+        print(sizeof(TraceFileHeader))
+        print("\n>>> Trace config HDR : 0x{:0128x}\n".format(int.from_bytes(fhdr, byteorder='big')))
+        for fld in (fhdr._fields_):
+            if not fld[0].startswith('_'):
+                if fld[0].startswith('pipeline'):
+                    print("{:50} {:#x} ({})".format(fld[0], getattr(fhdr, fld[0]), PIPELINE(getattr(fhdr, fld[0])).name))
         #        else:
         #            print("{:50} {:#x}".format(fld[0], getattr(fhdr, fld[0])))
 
@@ -209,7 +210,7 @@ def decode_mpu_trace_kd(bytez):
             break
     else:
         # Empty trace
-        #print("\n Empty trace \n")
+        print("\n Empty trace \n")
         return
 
     # print(','.join(hex(x) for x in bytez[:64]))
@@ -261,6 +262,8 @@ def decode_mpu_trace_kd(bytez):
                         instructions.append(ent)
                     s += sizeof(MpuTraceInstructionEntry)
 
+                #print("instructions length is")
+                #print(len(instructions))
                 # Generate
                 yield (
                         thdr,

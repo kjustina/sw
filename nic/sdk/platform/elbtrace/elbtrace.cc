@@ -20,28 +20,29 @@ namespace sdk {
 namespace platform {
 
 #define roundup(x, y) ((((x) + ((y)-1)) / (y)) * (y)) /* to any y */
-  //Neel. todo: Below todo comment is from capri. check what needs to be done for Elba
-// TODO. Need to read it from memory or file. Temporary fix for SDK compilation
 #define MREGION_MPU_TRACE_ADDR                                                 \
     (MREGION_BASE_ADDR + MREGION_MPU_TRACE_START_OFFSET)
-  //#define TRACE_END (MREGION_MPU_TRACE_ADDR + MREGION_MPU_TRACE_SIZE) //todo: req SW to make it deeper for SDP and DMA
+  //#define TRACE_END (MREGION_MPU_TRACE_ADDR + MREGION_MPU_TRACE_SIZE) 
 
 #define REGION_SPLIT  (MREGION_MPU_TRACE_SIZE/4)
 #define MPU_TRACE_SIZE (REGION_SPLIT)
-#define SDP_PHV_TRACE_SIZE (REGION_SPLIT)
-#define SDP_CTL_TRACE_SIZE (REGION_SPLIT)
+#define SDP_TRACE_SIZE (REGION_SPLIT)
 #define DMA_TRACE_SIZE (REGION_SPLIT)
+
+  //split SDP region for PHV and CTL. Assign 1/16th to CTL and rest to PHV
+#define SDP_REGION_SPLIT  (SDP_TRACE_SIZE/16)
+#define SDP_PHV_TRACE_SIZE (SDP_REGION_SPLIT * 15)
+#define SDP_CTL_TRACE_SIZE (SDP_REGION_SPLIT)
 
 #define TRACE_BASE roundup(MREGION_MPU_TRACE_ADDR, 4096)
 #define TRACE_END (MREGION_MPU_TRACE_ADDR + MPU_TRACE_SIZE)
 
-  //Neel. todo: what shd be the base address for sdp and dma?
-#define SDPTRACE_PHV_BASE roundup(TRACE_END+1, 4096)   //todo
-#define SDPTRACE_PHV_END (SDPTRACE_PHV_BASE + SDP_PHV_TRACE_SIZE - 4096) //todo
-#define SDPTRACE_CTL_BASE roundup(SDPTRACE_PHV_END+1, 4096)   //todo
-#define SDPTRACE_CTL_END (SDPTRACE_CTL_BASE + SDP_CTL_TRACE_SIZE - 4096) //todo
-#define DMATRACE_BASE    roundup(SDPTRACE_CTL_END+1, 4096) //todo
-#define DMATRACE_END     (DMATRACE_BASE + DMA_TRACE_SIZE - 4096) //todo
+#define SDPTRACE_PHV_BASE roundup(TRACE_END, 4096)   
+#define SDPTRACE_PHV_END (SDPTRACE_PHV_BASE + SDP_PHV_TRACE_SIZE - 4096) 
+#define SDPTRACE_CTL_BASE roundup(SDPTRACE_PHV_END, 4096)   
+#define SDPTRACE_CTL_END (SDPTRACE_CTL_BASE + SDP_CTL_TRACE_SIZE - 4096) 
+#define DMATRACE_BASE    roundup(SDPTRACE_CTL_END, 4096) 
+#define DMATRACE_END     (DMATRACE_BASE + DMA_TRACE_SIZE - 4096) 
 
 // Placeholder for the global state in mputrace app
 mputrace_global_state_t g_state = {};
@@ -50,10 +51,18 @@ void
 usage (char *argv[])
 {
     std::cerr << "Usage: " << std::endl
-              << "       " << argv[0] << " conf <cfg_file>" << std::endl
-              << "       " << argv[0] << " dump <out_file>" << std::endl
-              << "       " << argv[0] << " show" << std::endl
-              << "       " << argv[0] << " reset" << std::endl;
+              << "       " << argv[0] << " conf_mpu <cfg_file>" << std::endl
+              << "       " << argv[0] << " dump_mpu <out_file>" << std::endl
+              << "       " << argv[0] << " show_mpu" << std::endl
+              << "       " << argv[0] << " reset_mpu" << std::endl
+              << "       " << argv[0] << " conf_sdp <cfg_file>" << std::endl
+              << "       " << argv[0] << " dump_sdp <out_file>" << std::endl
+              << "       " << argv[0] << " show_sdp" << std::endl
+              << "       " << argv[0] << " reset_sdp" << std::endl
+              << "       " << argv[0] << " conf_dma <cfg_file>" << std::endl
+              << "       " << argv[0] << " dump_dma <out_file>" << std::endl
+              << "       " << argv[0] << " show_dma" << std::endl
+              << "       " << argv[0] << " reset_dma" << std::endl;
 }
 
 static inline int
@@ -83,6 +92,10 @@ mputrace_handle_options (int argc, char *argv[])
 {
     int ret = 0;
     std::map<std::string, int> oper = {
+        {"conf", MPUTRACE_CONFIG},
+        {"dump", MPUTRACE_DUMP},
+        {"reset", MPUTRACE_RESET},
+        {"show", MPUTRACE_SHOW},
         {"conf_mpu", MPUTRACE_CONFIG},
         {"dump_mpu", MPUTRACE_DUMP},
         {"reset_mpu", MPUTRACE_RESET},
@@ -161,12 +174,12 @@ mputrace_handle_options (int argc, char *argv[])
         break;
     case MPUTRACE_SHOW:
 
-      //      cout << "MREGION_MPU_TRACE_ADDR  " << hex << MREGION_MPU_TRACE_ADDR << endl;
-      // cout << "MREGION_BASE_ADDR 	        "   << hex << MREGION_BASE_ADDR 	     << endl;
+      //cout << "MREGION_MPU_TRACE_ADDR  " << hex << MREGION_MPU_TRACE_ADDR << endl;
+      //cout << "MREGION_BASE_ADDR 	        "   << hex << MREGION_BASE_ADDR 	     << endl;
       //cout << "MREGION_MPU_TRACE_START_OFFSET  " << hex << MREGION_MPU_TRACE_START_OFFSET << endl;
       //cout << "MREGION_MPU_TRACE_SIZE  " << hex << MREGION_MPU_TRACE_SIZE << endl;
 
-      // cout << "REGION_SPLIT     " << hex << REGION_SPLIT   << endl;
+      //cout << "REGION_SPLIT     " << hex << REGION_SPLIT   << endl;
       //cout << "MPU_TRACE_SIZE   " << hex << MPU_TRACE_SIZE  << endl;
       //cout << "SDP_PHV_TRACE_SIZE   " << hex << SDP_PHV_TRACE_SIZE  << endl;
       //cout << "SDP_CTL_TRACE_SIZE   " << hex << SDP_CTL_TRACE_SIZE  << endl;

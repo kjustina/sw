@@ -176,8 +176,8 @@ class CMDTYPE(Enum):
 #todo: check the values
 class DMAPIPE(Enum):
     SxPDMA = 2
-    RxPDMA = 1
-    TxPDMA = 0
+    TxPDMA = 1
+    RxPDMA = 0
 
 def decode_dma_trace_file(bytez, print_type, sort_type):
     #print ("test_def\n")
@@ -256,6 +256,10 @@ def decode_dmatrace_entry(bytez):
         #Each trace entry has a list associated with it
 
         Tinfo = DmaTraceEntry.from_buffer_copy(bytez[s: s + sizeof(DmaTraceEntry)])
+
+        ChkData0 = (bytez[s: s + sizeof(DmaTraceEntry)])
+        ChkData1 = (int.from_bytes(ChkData0, byteorder='big'))
+
         s += sizeof(DmaTraceEntry)
         
         #add DmaTraceEntry to the list. This is not used. Dictionary is used instead
@@ -263,7 +267,14 @@ def decode_dmatrace_entry(bytez):
         trace_entries.append(Tinfo)
         #create a dictionary with DmaTraceEntry and add it to the list
         entryDict = dma_dict_trace_entry(Tinfo)
-        trace_dict_entries.append(entryDict)
+
+        #Append only if it's a valid entry and not init value programmed by elbtrace cfg
+        init_val = 0x000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f202122232425262728292a2b2c2d2e2f303132333435363738393a3b3c3d3e3f
+        #if (ChkData1 == init_val):
+            #print(hex(ChkData1))
+        
+        if not (ChkData1 == init_val):
+            trace_dict_entries.append(entryDict)
 
         i = i + 1
 

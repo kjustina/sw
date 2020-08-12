@@ -198,18 +198,19 @@ elif args.command == "decode_mpu":
 
             stg_phv = defaultdict(list)
             #check if ts entry is available in sdp_list
-            if ts in sdp_list:
-                #print("Timestamp match found")
-                for entry in sdp_list[ts]:
-                    #print("entry")
-                    #for key in (entry):
-                        #print("{:50} {:#x}".format(key, entry[key]))
-                    #create per stage entries
-                    stg_num = entry["stage_num"]
-                    #print(stg_num)
-                    stg_phv[stg_num].append(entry["sdp_phv"])
-                    #print(entry["sdp_phv"])
-                #del sdp_list[ts]
+            if args.decode_sdp:
+                if ts in sdp_list:
+                    #print("Timestamp match found")
+                    for entry in sdp_list[ts]:
+                        #print("entry")
+                        #for key in (entry):
+                            #print("{:50} {:#x}".format(key, entry[key]))
+                        #create per stage entries
+                        stg_num = entry["stage_num"]
+                        #print(stg_num)
+                        stg_phv[stg_num].append(entry["sdp_phv"])
+                        #print(entry["sdp_phv"])
+                    #del sdp_list[ts]
 
             for fhdr, hdr, key, data, instructions in sorted(trace[ts], key=lambda x: hdr_sort_key(x[1])):
                 
